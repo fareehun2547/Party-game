@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Never Have I Ever - Poker Swaggie By : Hunnn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --accent-purple: #9333ea;
+            --accent-pink: #f43f5e;
+            --accent-gold: #fbbf24;
+        }
+        body { 
+            font-family: 'Mali', cursive, sans-serif; 
+            background: radial-gradient(circle at center, #581c87 0%, #0f172a 60%, var(--bg-deep) 100%); 
+            color: #f8fafc; 
+            padding: 15px; 
+            max-width: 500px; 
+            margin: auto; 
+            text-align: center; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.8) 1px, transparent 0),
+                radial-gradient(rgba(147, 51, 234, 0.5) 1.5px, transparent 0);
+            background-size: 50px 50px, 80px 80px;
+            animation: moveParticles 25s linear infinite;
+        }
+        @keyframes moveParticles {
+            0% { background-position: 0 0, 10px 30px; }
+            100% { background-position: 0 400px, 10px 430px; }
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95vh;
+        }
+
+        #setupScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .setup-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid var(--accent-purple);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(147, 51, 234, 0.3);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+        }
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .player-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .player-input-row input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-family: 'Mali', cursive;
+            outline: none;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #475569;
+            font-family: 'Mali', cursive;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        .start-game-btn {
+            background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+            color: #fff; border: none; padding: 12px; border-radius: 14px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(147, 51, 234, 0.4); margin-top: 10px;
+        }
+
+        #gameScreen {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .current-player-banner {
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid var(--accent-purple);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #d8b4fe;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        h1 { 
+            font-size: 1.3rem; 
+            background: linear-gradient(to right, #e879f9, #c084fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2px 0; 
+        }
+
+        .statement-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 3px solid var(--accent-purple);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 10px auto;
+            width: 90%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 30px rgba(147, 51, 234, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+            animation: popCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popCard {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .statement-title {
+            font-size: 1rem;
+            color: #c084fc;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .statement-text {
+            font-size: 1.15rem;
+            color: #f8fafc;
+            line-height: 1.4;
+            font-weight: bold;
+        }
+
+        .rule-box {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+            color: #fde047;
+            text-align: left;
+        }
+        .rule-box div { margin: 3px 0; }
+
+        .next-statement-btn {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+            color: #fff; border: none; padding: 12px; border-radius: 16px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.05rem; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(147, 51, 234, 0.5);
+            transition: transform 0.2s;
+        }
+        .next-statement-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+
+        .back-home-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+            color: #fff; text-decoration: none; font-family: 'Mali', cursive; font-weight: bold; font-size: 0.85rem;
+            padding: 8px 16px; border-radius: 12px; border: 2px solid #cbd5e1; margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <div class="wrapper">
+        <!-- Setup -->
+        <div id="setupScreen">
+            <div class="setup-box">
+                <h1>🤫 Never Have I Ever 🤫</h1>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">คลังคำถาม 100 ข้อ + กติกาความถี่จัดเต็ม!</p>
+                <label style="font-size: 0.9rem; display: block; text-align: left; margin-bottom: 5px;">จำนวนผู้เล่น:</label>
+                <select id="playerCountSelect" onchange="generatePlayerInputs()">
+                    <option value="2">2 คน</option>
+                    <option value="3">3 คน</option>
+                    <option value="4" selected>4 คน</option>
+                    <option value="5">5 คน</option>
+                    <option value="6">6 คน</option>
+                    <option value="7">7 คน</option>
+                    <option value="8">8 คน</option>
+                </select>
+                <div class="player-inputs" id="playerInputsContainer"></div>
+                <button class="start-game-btn" onclick="startGame()">🚀 เริ่มแฉความลับ (100 ข้อ)!</button>
+                <div style="margin-top: 15px;">
+                    <a href="index.html" class="back-home-btn">🏠 กลับหน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen">
+            <div>
+                <div class="current-player-banner" id="currentPlayerBanner">👤 ผู้กล่าว: -</div>
+                <h1>Never Have I Ever</h1>
+            </div>
+
+            <div class="statement-card" id="statementCard">
+                <div class="statement-title">✋ ใครเคยทำ... เตรียมตัวดื่ม!</div>
+                <div class="statement-text" id="statementText">กดปุ่มด้านล่างเพื่อสุ่มข้อความ</div>
+            </div>
+
+            <div class="rule-box">
+                <div>🔥 <b>ทำบ่อย (ประจำ):</b> กินเพรียวหมดแก้ว!</div>
+                <div>🍻 <b>ทำไม่บ่อย (นานๆ ที):</b> กิน 1 อึก!</div>
+                <div>💧 <b>ทำน้อย (เคยทำนิดเดียว):</b> จิบเบาๆ พอ!</div>
+            </div>
+
+            <div>
+                <button class="next-statement-btn" onclick="nextStatement()">👉 ข้อความถัดไป / ตาถัดไป</button>
+                <div style="margin-top: 8px;">
+                    <button onclick="backToSetup()" class="back-home-btn" style="background: #1e293b; border-color: #475569;">👥 เปลี่ยนรายชื่อผู้เล่น</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let currentPlayerIndex = 0;
+        let remainingStatements = [];
+
+        const masterStatements = [
+            "ไม่เคยแอบชอบเพื่อนสนิทตัวเองในกลุ่มนี้",
+            "ไม่เคยแกล้งหลับบนรถเมล์หรือ BTS เพื่อไม่ต้องลุกให้คนอื่นนั่ง",
+            "ไม่เคยส่งข้อความหาผิดคนแล้วเนียนเปลี่ยนเรื่องคุย",
+            "ไม่เคยแอบกินของในตู้เย็นของรูมเมทโดยไม่ขออนุญาต",
+            "ไม่เคยแอบส่องโซเชียลมีเดียแฟนเก่าตอนดึกๆ ดื่นๆ",
+            "ไม่เคยแกล้งทำเป็นโทรศัพท์เข้าเพื่อหนีสถานการณ์น่าเบื่อ",
+            "ไม่เคยดูซีรีส์ยิงยาวโต้รุ่งจนไม่ได้นอนแล้วไปเรียน/ทำงาน",
+            "ไม่เคยลืมชื่อคนที่เพิ่งแนะนำตัวด้วยในเวลาไม่ถึง 5 นาที",
+            "ไม่เคยแอบร้องไห้คนเดียวในห้องน้ำเพราะเรื่องไร้สาระ",
+            "ไม่เคยส่งสติ๊กเกอร์ผิดกลุ่มแล้วช็อกตาตั้ง",
+            "ไม่เคยแอบถ่ายรูปคนอื่นลงสตอรี่โดยที่เขาไม่รู้ตัว",
+            "ไม่เคยเกือบทำมือถือตกส้วมหรืออ่างล้างหน้า",
+            "ไม่เคยแอบกดไลก์รูปเก่าของคนคุยเก่ารูปแรกสุด",
+            "ไม่เคยใส่เสื้อผ้าซ้ำติดกัน 2 วันเวลาอยู่บ้านคนเดียว",
+            "ไม่เคยแกล้งทำเป็นได้ยินที่คนอื่นพูด ทั้งที่ไม่ได้ยินอะไรเลย",
+            "ไม่เคยเดินชนกระจกใสหรือเสาไฟฟ้าเพราะมัวแต่ก้มดูมือถือ",
+            "ไม่เคยแอบตดในลิฟต์แล้วทำหน้าเนียนเหมือนไม่มีอะไรเกิดขึ้น",
+            "ไม่เคยซื้อของออนไลน์ตอนดึกๆ แล้วตื่นมาจำไม่ได้ว่าสั่งอะไรไป",
+            "ไม่เคยแอบคุยโทรศัพท์กับแฟนในเวลาทำงานหรือเวลาเรียน",
+            "ไม่เคยแอบนินทาคนอื่นในใจแล้วเผลอยิ้มออกมาคนเดียว",
+            "ไม่เคยแอบเอาของคนอื่นมาใช้แล้วอ้างว่าหยิบผิด",
+            "ไม่เคยลืมพาสเวิร์ดตัวเองจนต้องกดรีเซ็ตใหม่บ่อยๆ",
+            "ไม่เคยขับรถเลยทางเลี้ยวแล้วต้องวนอ้อมไกลเป็นกิโล",
+            "ไม่เคยแอบกินขนมที่ซ่อนไว้แล้วโดนคนอื่นจับได้",
+            "ไม่เคยทำกุญแจหายแล้วพบว่ามันอยู่ในกระเป๋าตัวเอง",
+            "ไม่เคยแกล้งทำเป็นทำงานยุ่งทั้งที่เปิดหน้าจอเล่นเกม",
+            "ไม่เคยเดินเข้าห้องผิดแล้วแกล้งทำเป็นเดินตรวจงาน",
+            "ไม่เคยตื่นสายแล้วบอกว่ารถติด ทั้งที่เพิ่งตื่นนอน",
+            "ไม่เคยแอบเก๊กหน้ากระจกแล้วนึกว่าตัวเองหล่อ/สวยที่สุด",
+            "ไม่เคยคุยคนเดียวหรือเถียงกับตัวเองออกเสียงดัง",
+            "ไม่เคยพยายามเปิดประตูแบบผลัก ทั้งที่ป้ายเขียนว่า 'ดึง'",
+            "ไม่เคยพยายามเปิดประตูแบบดึง ทั้งที่ป้ายเขียนว่า 'ผลัก'",
+            "ไม่เคยเผลอหัวเราะตอนที่คนอื่นกำลังซีเรียส",
+            "ไม่เคยทำของตกแตกกลางร้านค้าแล้วรีบเดินหนีเนียนๆ",
+            "ไม่เคยแอบพิมพ์ด่าใครในแชทแล้วเผลอกดส่งผิดกลุ่ม",
+            "ไม่เคยลืมว่าตัวเองเดินเข้าห้องมาหยิบอะไร",
+            "ไม่เคยแกล้งทำเป็นอ่านหนังสือหนาๆ เพื่อให้คนอื่นคิดว่าขยัน",
+            "ไม่เคยพยายามกู้ชีพแมลงสาบเพราะความสงสาร (แล้วมันก็วิ่งใส่)",
+            "ไม่เคยแอบเอาโทรศัพท์มาส่องใต้โต๊ะระหว่างประชุม/เรียน",
+            "ไม่เคยใส่กางเกงกลับด้านแล้วเพิ่งรู้ตัวตอนเย็น",
+            "ไม่เคยเผลอหลับในโรงหนังแล้วกรนเสียงดัง",
+            "ไม่เคยสั่งอาหารมาเต็มโต๊ะแล้วกินไม่หมดจนต้องห่อกลับบ้าน",
+            "ไม่เคยแอบถ่ายรูปตัวเองเป็นร้อยรูปเพื่อหาแชะที่สวยที่สุด",
+            "ไม่เคยเกือบสำลักน้ำลายตัวเองเวลาไม่มีอะไรจะกิน",
+            "ไม่เคยแอบเช็คกลิ่นปากตัวเองด้วยการเอามือมาดม",
+            "ไม่เคยแอบใช้แปรงสีฟันคนอื่นโดยไม่ได้ตั้งใจ",
+            "ไม่เคยลืมปิดไมค์ตอนประชุมออนไลน์แล้วเสียงเข้า",
+            "ไม่เคยแอบร้องเพลงเสียงดังในห้องน้ำแล้วคิดว่าเป็นนักร้องดัง",
+            "ไม่เคยทำเนียนกดไลก์รูปในไอจีคนอื่นตอนตีสาม",
+            "ไม่เคยนับเงินในกระเป๋าแล้วพบว่าเหลือไม่ถึงร้อยบาท",
+            "ไม่เคยแอบตั้งนาฬิกาปลุกห่างกันทีละ 5 นาที 10 รอบ",
+            "ไม่เคยแอบส่องกระจกมองหลังรถยนต์แล้วทำหน้าประหลาด",
+            "ไม่เคยลืมว่าจอดรถไว้โซนไหนของห้างสรรพสินค้า",
+            "ไม่เคยแอบกินมาม่าดิบโดยการบดแล้วเทผงปรุงรสใส่ซอง",
+            "ไม่เคยทำท่าทางเหมือนมีคนเดินตามเวลาเดินคนเดียวตอนกลางคืน",
+            "ไม่เคยแอบกดดูสตอรี่ไอจีของคนที่ไม่ชอบหน้า",
+            "ไม่เคยพยายามทำตัวเท่ๆ ต่อหน้าคนอื่นแล้วสะดุดขาตัวเอง",
+            "ไม่เคยแอบซื้อของแพงเกินตัวแล้วเครียดทีหลัง",
+            "ไม่เคยแอบกินของอร่อยคำสุดท้ายแล้วบอกอิ่ม",
+            "ไม่เคยเผลอเรียกชื่อครู/หัวหน้าว่า 'แม่' หรือ 'พ่อ'",
+            "ไม่เคยแอบเปิดตู้เย็นซ้ำๆ ทั้งที่รู้ว่าไม่มีอะไรกินเพิ่ม",
+            "ไม่เคยทำเนียนเดินเข้าร้านสะดวกซื้อเพื่อตากแอร์เฉยๆ",
+            "ไม่เคยแอบใช้แอปแต่งรูปจนพ่อแม่จำไม่ได้",
+            "ไม่เคยพิมพ์แชทหายไปเฉยๆ ข้ามวันแล้วค่อยมาตอบ",
+            "ไม่เคยแอบอ่านแชทแบบไม่ให้ขึ้นสถานะ 'อ่านแล้ว'",
+            "ไม่เคยทำของตกใต้เตียงแล้วขี้เกียจก้มเก็บจนปล่อยไว้อย่างนั้น",
+            "ไม่เคยแอบคุยกับสัตว์เลี้ยงแล้วคิดว่ามันตอบได้",
+            "ไม่เคยแอบกินน้ำจากขวดโดยตรงแล้วโดนแม่บ่น",
+            "ไม่เคยทำตัวเป็นกูรูเรื่องความรักทั้งที่โสดสนิท",
+            "ไม่เคยแอบคิดว่าตัวเองมีพลังวิเศษตอนเด็กๆ",
+            "ไม่เคยเดินชนตู้หรือโต๊ะที่อยู่ตำแหน่งเดิมมาเป็นปี",
+            "ไม่เคยแอบตั้งชื่อเล่นให้คนแปลกหน้าที่เจอ บนรถไฟฟ้า",
+            "ไม่เคยพยายามแกะซองขนมด้วยมือเปล่าแล้วขาดกระจุยจนต้องใช้กรรไกร",
+            "ไม่เคยแอบร้องไห้ตามซีรีส์เกาหลีจนตาบวม",
+            "ไม่เคยทำทีเป็นยุ่งกับมือถือเวลาเจอคนรู้จักไม่อยากทัก",
+            "ไม่เคยแอบคิดแผนแก้แค้นในใจเวลาโดนเอาเปรียบเล็กๆ น้อยๆ",
+            "ไม่เคยแอบโยนขยะลงพื้นแล้วหวังว่าไม่มีใครเห็น",
+            "ไม่เคยใส่ถุงเท้าคนละสีออกจากบ้านโดยไม่รู้ตัว",
+            "ไม่เคยแอบเอาหมอนข้างมากอดแล้วจินตนาการว่าเป็นคนรัก",
+            "ไม่เคยเผลอหลับคาหน้าจอคอมพิวเตอร์หรือมือถือ",
+            "ไม่เคยแอบกินไอศกรีมจากถังคนเดียวหมดรวดเดียว",
+            "ไม่เคยแอบเกาหลังด้วยไม้แขวนเสื้อหรือไม้บรรทัด",
+            "ไม่เคยทำตัวเป็นคนตลกในกลุ่มแต่จริงๆ เครียดมาก",
+            "ไม่เคยแอบหาคำทำนายดวงชะตาตัวเองในเน็ต",
+            "ไม่เคยลืมว่าวางแว่นตาหรือมือถือไว้ที่ไหนทั้งที่ถืออยู่",
+            "ไม่เคยแอบขำมุกตลกฝืดๆ ของตัวเองอยู่คนเดียว",
+            "ไม่เคยแอบจ้องหน้าคนแปลกบนรถไฟจนเขาหันมามอง",
+            "ไม่เคยแอบตัดผมเองหน้ากระจกแล้วเละจนต้องไปแก้ที่ร้าน",
+            "ไม่เคยพยายามทำตัวสตรองทั้งที่ข้างในพังยับเยิน",
+            "ไม่เคยแอบนับเลขในใจเวลาโกรธเพื่อให้ใจเย็นลง",
+            "ไม่เคยแอบกินน้ำตาลหรือนมข้นหวานจากหลอดบีบตรงๆ",
+            "ไม่เคยทำตัวเป็นเด็กเรียนปลอมๆ ก่อนวันสอบวันเดียว",
+            "ไม่เคยแอบบ่นกับตัวเองเสียงดังจนคนอื่นได้ยิน",
+            "ไม่เคยแอบคิดว่าถ้าถูกล็อตเตอรี่รางวัลที่ 1 จะเอาเงินไปทำอะไรบ้าง",
+            "ไม่เคยเผลอทำหน้าเหวี่ยงใส่คนอื่นโดยไม่รู้ตัว",
+            "ไม่เคยแอบกดดูคลิปผีตอนดึกแล้วนอนคลุมโปง",
+            "ไม่เคยแอบกินของหมดอายุเพราะเสียดาย",
+            "ไม่เคยทำตัวเป็นผู้เชี่ยวชาญทุกเรื่องในวงเหล้า",
+            "ไม่เคยแอบตื่นเต้นเวลาเจอคนดังเดินผ่าน",
+            "ไม่เคยคิดอยากย้อนเวลากลับไปแก้ไขเรื่องตลกๆ ในอดีต"
+        ];
+
+        function generatePlayerInputs() {
+            let count = document.getElementById('playerCountSelect').value;
+            let container = document.getElementById('playerInputsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="player-input-row">
+                        <span style="font-size:0.85rem; width:55px; text-align:left;">คนที่ ${i+1}:</span>
+                        <input type="text" id="playerName_${i}" placeholder="ใส่ชื่อผู้เล่น ${i+1}" value="เพื่อน ${i+1}">
+                    </div>
+                `;
+            }
+        }
+
+        function startGame() {
+            let count = document.getElementById('playerCountSelect').value;
+            players = [];
+            for (let i = 0; i < count; i++) {
+                let name = document.getElementById(`playerName_${i}`).value.trim();
+                if (name) players.push(name);
+            }
+            if (players.length === 0) {
+                alert('กรุณาใส่อย่างน้อย 1 คน!');
+                return;
+            }
+            currentPlayerIndex = 0;
+            remainingStatements = [...masterStatements];
+
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            updateCurrentPlayerUI();
+            nextStatement();
+        }
+
+        function backToSetup() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('setupScreen').style.display = 'flex';
+        }
+
+        function updateCurrentPlayerUI() {
+            document.getElementById('currentPlayerBanner').innerHTML = `👤 ผู้กล่าวประโยคนี้: <span style="color: #e879f9;">${players[currentPlayerIndex]}</span>`;
+        }
+
+        function nextStatement() {
+            if (remainingStatements.length === 0) {
+                remainingStatements = [...masterStatements];
+            }
+
+            let randIdx = Math.floor(Math.random() * remainingStatements.length);
+            let text = remainingStatements.splice(randIdx, 1)[0];
+
+            let card = document.getElementById('statementCard');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'popCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+
+            document.getElementById('statementText').innerText = `"${text}"`;
+
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            updateCurrentPlayerUI();
+        }
+
+        window.onload = function() {
+            generatePlayerInputs();
+        };
+    </script>
+</body>
+</html>

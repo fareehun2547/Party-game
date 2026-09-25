@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Poker Swaggie Hub - เลือกโหมดเกมปาร์ตี้</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --accent-pink: #f43f5e;
+            --accent-purple: #a855f7;
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --accent-green: #10b981;
+        }
+        body { 
+            font-family: 'Mali', cursive, sans-serif; 
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 50%, var(--bg-deep) 100%); 
+            color: #f8fafc; 
+            padding: 25px 15px; 
+            max-width: 800px; 
+            margin: auto; 
+            text-align: center; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.9) 1.2px, transparent 0),
+                radial-gradient(rgba(168, 85, 247, 0.6) 2px, transparent 0),
+                radial-gradient(rgba(56, 189, 248, 0.5) 1px, transparent 0);
+            background-size: 50px 50px, 90px 90px, 70px 70px;
+            animation: moveParticles 30s linear infinite;
+        }
+        @keyframes moveParticles {
+            0% { background-position: 0 0, 10px 30px, 20px 50px; }
+            100% { background-position: 0 500px, 10px 530px, 20px 550px; }
+        }
+
+        .glow-orb {
+            position: fixed;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+        .orb-1 { top: -100px; left: -100px; background: var(--accent-purple); }
+        .orb-2 { bottom: -100px; right: -100px; background: var(--accent-pink); }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            margin: auto;
+        }
+
+        .user-welcome {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.6);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            color: #d8b4fe;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        h1 { 
+            font-size: 2.6rem; 
+            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 30%, #a855f7 70%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 5px 0; 
+            filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.5));
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin-bottom: 35px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        /* ปรับกรอบทุกอันให้เป็นสีม่วงสวยเด่นชัดทั้งหมด */
+        .game-card {
+            background: linear-gradient(145deg, rgba(30, 27, 75, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(168, 85, 247, 0.6);
+            border-radius: 22px;
+            padding: 22px;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(12px);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent-gold);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 35px rgba(251, 191, 36, 0.5);
+        }
+        .game-card:hover::before { opacity: 1; }
+
+        .card-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .game-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+            transition: transform 0.3s;
+        }
+        .game-card:hover .game-icon { transform: scale(1.15) rotate(5deg); }
+
+        .game-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #f8fafc;
+            margin-bottom: 6px;
+        }
+
+        .game-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            line-height: 1.45;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .badge-hot { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #fff; }
+        .badge-new { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: #fff; }
+        .badge-fun { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #fff; }
+
+        .logout-container {
+            margin: 15px 0 10px 0;
+        }
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 0.95rem;
+            padding: 12px 28px;
+            border-radius: 16px;
+            border: 2px solid #f87171;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .logout-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            filter: brightness(1.15);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.6);
+        }
+
+        .footer-credit {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="wrapper">
+        <div id="welcomeBadge" class="user-welcome">✨ ยินดีต้อนรับ, ผู้เล่น</div>
+        <h1>POKER SWAGGIE</h1>
+        <p class="subtitle">🎉 อาณาจักรปาร์ตี้และความบันเทิง เลือกโหมดความมันส์ด้านล่างได้เลย!</p>
+
+        <div class="game-grid">
+            <!-- 1. Card Poker -->
+            <a href="cardpoker.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">🃏</div>
+                        <span class="badge badge-hot">Popular 🔥</span>
+                    </div>
+                    <div class="game-title">Card Poker</div>
+                    <div class="game-desc">สำรับมาตรฐาน 52 ใบ กติกาโอฮาน่าครบถ้วน พร้อมสถานะบัดดี้และมินิเกม 10 วินาที!</div>
+                </div>
+            </a>
+
+            <!-- 2. King's Cup -->
+            <a href="kingscup.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">👑</div>
+                        <span class="badge badge-new">New 🍻</span>
+                    </div>
+                    <div class="game-title">King's Cup</div>
+                    <div class="game-desc">เกมแก้วราชาในตำนาน จั่วไพ่ทำตามกฎและรินน้ำใส่แก้วกลางวง ใครทำล้นซดเรียบ!</div>
+                </div>
+            </a>
+
+            <!-- 3. Up and Down -->
+            <a href="upanddown.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">📈</div>
+                        <span class="badge badge-new">Trending 🚀</span>
+                    </div>
+                    <div class="game-title">Up and Down</div>
+                    <div class="game-desc">เกมทายไพ่สูง-ต่ำ ลุ้นระทึก ทายผิดสะสมแก้วกลางวง ใครพลาดตอนล้นซดหมดแก้ว!</div>
+                </div>
+            </a>
+
+            <!-- 4. Truth or Dare -->
+            <a href="truthordare.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">🔥</div>
+                        <span class="badge badge-fun">Fun 🔥</span>
+                    </div>
+                    <div class="game-title">Truth or Dare</div>
+                    <div class="game-desc">เกมวัดใจสุ่มชื่อเพื่อนในวง เลือกระหว่างตอบความจริงสุดซีเคร็ตหรือรับคำท้าสุดแสบ</div>
+                </div>
+            </a>
+
+            <!-- 5. Never Have I Ever -->
+            <a href="neverhaveiever.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">🤫</div>
+                        <span class="badge badge-fun">100 Questions</span>
+                    </div>
+                    <div class="game-title">Never Have I Ever</div>
+                    <div class="game-desc">เกมแฉความลับ 100 ข้อ พร้อมกติกา ทำบ่อยกินเพรียว ทำน้อยจิบเบาๆ!</div>
+                </div>
+            </a>
+
+            <!-- 6. Cards Classic (121 ใบ) -->
+            <a href="cards.html" class="game-card">
+                <div>
+                    <div class="card-top-row">
+                        <div class="game-icon">🎴</div>
+                        <span class="badge badge-fun">Classic</span>
+                    </div>
+                    <div class="game-title">Cards Classic (121 ใบ)</div>
+                    <div class="game-desc">สำรับการ์ดรวมพลัง 121 ใบเวอร์ชันดั้งเดิม พร้อมระบบสุ่มคำสั่งและบอมบ์จัดเต็ม</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="logout-container">
+            <button class="logout-btn" onclick="logout()">🚪 ออกจากระบบ / เปลี่ยนชื่อ</button>
+        </div>
+
+        <div class="footer-credit">
+            Created with 🍻 and Passion by Hunnn
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            let username = localStorage.getItem('poker_username');
+            if (!username) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('welcomeBadge').innerHTML = `✨ ยินดีต้อนรับคุณ: <b style="color:#38bdf8;">${username}</b>`;
+            }
+        };
+
+        function logout() {
+            localStorage.removeItem('poker_username');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

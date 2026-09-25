@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Up and Down - Poker Swaggie By : Hunnn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+        }
+        body { 
+            font-family: 'Mali', cursive, sans-serif; 
+            background: radial-gradient(circle at center, #064e3b 0%, #0f172a 60%, var(--bg-deep) 100%); 
+            color: #f8fafc; 
+            padding: 15px; 
+            max-width: 500px; 
+            margin: auto; 
+            text-align: center; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.8) 1px, transparent 0),
+                radial-gradient(rgba(16, 185, 129, 0.4) 1.5px, transparent 0);
+            background-size: 50px 50px, 80px 80px;
+            animation: moveParticles 25s linear infinite;
+        }
+        @keyframes moveParticles {
+            0% { background-position: 0 0, 10px 30px; }
+            100% { background-position: 0 400px, 10px 430px; }
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95vh;
+        }
+
+        #setupScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .setup-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid var(--accent-green);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+        }
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .player-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .player-input-row input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-family: 'Mali', cursive;
+            outline: none;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #475569;
+            font-family: 'Mali', cursive;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        .start-game-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff; border: none; padding: 12px; border-radius: 14px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4); margin-top: 10px;
+        }
+
+        #gameScreen {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .current-player-banner {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #34d399;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .stat-badge {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.6);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #34d399;
+        }
+
+        h1 { 
+            font-size: 1.4rem; 
+            background: linear-gradient(to right, #34d399, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2px 0; 
+        }
+
+        .card-display-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+        }
+        .game-card {
+            width: 150px;
+            height: 215px;
+            background: #fff;
+            color: #1e293b;
+            border-radius: 18px;
+            border: 4px solid var(--accent-green);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            position: relative;
+            transform: scale(0.9);
+            animation: popCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popCard {
+            0% { transform: scale(0.6) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .card-corner { font-size: 1.1rem; font-weight: bold; }
+        .card-center-symbol { font-size: 3rem; margin: auto; }
+
+        .guess-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 10px 0;
+        }
+        .guess-btn {
+            padding: 14px;
+            border-radius: 16px;
+            border: none;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+        .guess-btn:active { transform: scale(0.95); }
+        .btn-high { background: linear-gradient(135deg, #10b981 0%, #047857 100%); border: 2px solid #34d399; }
+        .btn-low { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; }
+
+        .back-home-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+            color: #fff; text-decoration: none; font-family: 'Mali', cursive; font-weight: bold; font-size: 0.85rem;
+            padding: 7px 14px; border-radius: 12px; border: 2px solid #cbd5e1; margin-top: 3px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal-content {
+            background: #0f172a; border: 3px solid var(--accent-green); padding: 22px; border-radius: 22px;
+            width: 90%; max-width: 360px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        }
+        .result-close-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 10px;
+            border-radius: 12px; width: 100%; font-family: 'Mali', cursive; font-weight: bold; font-size: 1rem; cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <div class="wrapper">
+        <!-- Setup -->
+        <div id="setupScreen">
+            <div class="setup-box">
+                <h1>📈 Up and Down 📉</h1>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">ใส่ชื่อเพื่อนในตี้ ผลัดกันทายไพ่สูงหรือต่ำ</p>
+                <label style="font-size: 0.9rem; display: block; text-align: left; margin-bottom: 5px;">จำนวนผู้เล่น:</label>
+                <select id="playerCountSelect" onchange="generatePlayerInputs()">
+                    <option value="2">2 คน</option>
+                    <option value="3">3 คน</option>
+                    <option value="4" selected>4 คน</option>
+                    <option value="5">5 คน</option>
+                    <option value="6">6 คน</option>
+                    <option value="7">7 คน</option>
+                    <option value="8">8 คน</option>
+                </select>
+                <div class="player-inputs" id="playerInputsContainer"></div>
+                <button class="start-game-btn" onclick="startGame()">🚀 เริ่มเกมวัดดวงสูงต่ำ!</button>
+                <div style="margin-top: 15px;">
+                    <a href="index.html" class="back-home-btn">🏠 กลับหน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen">
+            <div>
+                <div class="current-player-banner" id="currentPlayerBanner">👤 ตาของ: -</div>
+                <div class="top-bar">
+                    <div class="stat-badge" id="drawCounter">🃏 ไพ่เหลือ: 52 ใบ</div>
+                    <div class="stat-badge" id="poolCounter" style="color: #fde047; border-color: #fbbf24;">🏆 แก้วกลางสะสม: 0 อึก</div>
+                </div>
+                <h1>Up and Down (สูง-ต่ำ)</h1>
+            </div>
+
+            <div class="card-display-container" id="cardContainer">
+                <div class="game-card" id="currentCardUI">
+                    <div class="card-corner" id="cardTopCorner" style="color:#ef4444;">7♥</div>
+                    <div class="card-center-symbol" id="cardCenterSymbol" style="color:#ef4444;">♥</div>
+                    <div class="card-corner" id="cardBottomCorner" style="color:#ef4444; transform:rotate(180deg); text-align:right;">7♥</div>
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 5px 0;">ทายสิว่าไพ่ใบถัดไปจะสูงกว่าหรือต่ำกว่า?</p>
+
+            <div class="guess-buttons">
+                <button class="guess-btn btn-high" onclick="makeGuess('HIGH')">📈 สูงกว่า (High)</button>
+                <button class="guess-btn btn-low" onclick="makeGuess('LOW')">📉 ต่ำกว่า (Low)</button>
+            </div>
+
+            <div>
+                <button onclick="backToSetup()" class="back-home-btn" style="background: #1e293b; border-color: #475569;">👥 เปลี่ยนรายชื่อผู้เล่น</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ผลลัพธ์ -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="color: #34d399; margin-bottom: 8px;">ผลการทาย</h2>
+            <p id="modalDesc" style="font-size: 1rem; color: #f8fafc; line-height: 1.4; margin-bottom: 10px;"></p>
+            <div id="modalCardShow" style="display:flex; justify-content:center; margin: 10px 0;"></div>
+            <button class="result-close-btn" onclick="closeModal()">ตาถัดไป 🍻</button>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let currentPlayerIndex = 0;
+        let deck = [];
+        let currentCard = null;
+        let poolCount = 0;
+
+        const suits = ['♠', '♥', '♦', '♣'];
+        const values = [
+            { name: '2', weight: 2 }, { name: '3', weight: 3 }, { name: '4', weight: 4 },
+            { name: '5', weight: 5 }, { name: '6', weight: 6 }, { name: '7', weight: 7 },
+            { name: '8', weight: 8 }, { name: '9', weight: 9 }, { name: '10', weight: 10 },
+            { name: 'J', weight: 11 }, { name: 'Q', weight: 12 }, { name: 'K', weight: 13 }, { name: 'A', weight: 14 }
+        ];
+
+        function generatePlayerInputs() {
+            let count = document.getElementById('playerCountSelect').value;
+            let container = document.getElementById('playerInputsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="player-input-row">
+                        <span style="font-size:0.85rem; width:55px; text-align:left;">คนที่ ${i+1}:</span>
+                        <input type="text" id="playerName_${i}" placeholder="ใส่ชื่อผู้เล่น ${i+1}" value="เพื่อน ${i+1}">
+                    </div>
+                `;
+            }
+        }
+
+        function startGame() {
+            let count = document.getElementById('playerCountSelect').value;
+            players = [];
+            for (let i = 0; i < count; i++) {
+                let name = document.getElementById(`playerName_${i}`).value.trim();
+                if (name) players.push(name);
+            }
+            if (players.length === 0) {
+                alert('กรุณาใส่อย่างน้อย 1 คน!');
+                return;
+            }
+            currentPlayerIndex = 0;
+            poolCount = 0;
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            initDeck();
+            drawFirstCard();
+        }
+
+        function backToSetup() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('setupScreen').style.display = 'flex';
+        }
+
+        function updateUI() {
+            document.getElementById('currentPlayerBanner').innerHTML = `👤 ตาของ: <span style="color: #34d399;">${players[currentPlayerIndex]}</span>`;
+            document.getElementById('drawCounter').innerText = `🃏 ไพ่เหลือ: ${deck.length} ใบ`;
+            document.getElementById('poolCounter').innerText = `🏆 แก้วกลาง: ${poolCount} อึก`;
+        }
+
+        function initDeck() {
+            deck = [];
+            suits.forEach(suit => {
+                values.forEach(val => {
+                    let color = (suit === '♥' || suit === '♦') ? '#ef4444' : '#1e293b';
+                    deck.push({
+                        name: val.name,
+                        weight: val.weight,
+                        suit: suit,
+                        color: color
+                    });
+                });
+            });
+            // สับไพ่
+            for (let i = deck.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        function drawFirstCard() {
+            if (deck.length === 0) initDeck();
+            currentCard = deck.pop();
+            renderCard(currentCard);
+            updateUI();
+        }
+
+        function renderCard(card) {
+            document.getElementById('cardTopCorner').innerText = `${card.name}${card.suit}`;
+            document.getElementById('cardTopCorner').style.color = card.color;
+            document.getElementById('cardCenterSymbol').innerText = card.suit;
+            document.getElementById('cardCenterSymbol').style.color = card.color;
+            document.getElementById('cardBottomCorner').innerText = `${card.name}${card.suit}`;
+            document.getElementById('cardBottomCorner').style.color = card.color;
+        }
+
+        function makeGuess(guess) {
+            if (deck.length === 0) initDeck();
+            let nextCard = deck.pop();
+            let playerName = players[currentPlayerIndex];
+
+            let isHigher = nextCard.weight > currentCard.weight;
+            let isLower = nextCard.weight < currentCard.weight;
+            let isSame = nextCard.weight === currentCard.weight;
+
+            let win = false;
+            if (guess === 'HIGH' && isHigher) win = true;
+            if (guess === 'LOW' && isLower) win = true;
+            if (isSame) {
+                // เสมอถือว่าทายผิด ดื่มปรับฮา
+                win = false;
+            }
+
+            let modalTitle = document.getElementById('modalTitle');
+            let modalDesc = document.getElementById('modalDesc');
+            let modalCardShow = document.getElementById('modalCardShow');
+
+            modalCardShow.innerHTML = `
+                <div class="game-card" style="width: 100px; height: 140px; font-size:0.8rem;">
+                    <div class="card-corner" style="color:${nextCard.color};">${nextCard.name}${nextCard.suit}</div>
+                    <div class="card-center-symbol" style="color:${nextCard.color}; font-size:2rem;">${nextCard.suit}</div>
+                    <div class="card-corner" style="color:${nextCard.color}; transform:rotate(180deg); text-align:right;">${nextCard.name}${nextCard.suit}</div>
+                </div>
+            `;
+
+            if (win) {
+                modalTitle.innerText = "🎉 ทายถูก!รอดตัวไป";
+                modalTitle.style.color = "#34d399";
+                modalDesc.innerHTML = `<b>${playerName}</b> ทายแม่นมาก! ไพ่คือ <b>${nextCard.name}${nextCard.suit}</b> รอดไม่ต้องดื่ม ส่งไม้ต่อให้คนถัดไป!`;
+            } else {
+                poolCount += 1;
+                modalTitle.innerText = "💥 ทายผิด! ซดน้ำล้างตา";
+                modalTitle.style.color = "#ef4444";
+                modalDesc.innerHTML = `<b>${playerName}</b> ทายผิด! ไพ่คือ <b>${nextCard.name}${nextCard.suit}</b><br>ต้องดื่ม <b>1 อึก</b> และแก้วกลางเพิ่มเป็น <b>${poolCount} อึก!</b>`;
+            }
+
+            currentCard = nextCard;
+            renderCard(currentCard);
+
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            updateUI();
+        }
+
+        window.onload = function() {
+            generatePlayerInputs();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultimate Drinking Single Deck Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050511;
+            --accent-pink: #f43f5e;
+            --accent-purple: #9333ea;
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+        }
+        body { 
+            font-family: 'Mali', cursive, sans-serif; 
+            background: radial-gradient(circle at center, #1a2e05 0%, #0f172a 50%, var(--bg-deep) 100%); 
+            color: #f8fafc; 
+            padding: 15px; 
+            max-width: 550px; 
+            margin: auto; 
+            text-align: center; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(white 1px, transparent 0),
+                radial-gradient(rgba(56, 189, 248, 0.8) 1.5px, transparent 0);
+            background-size: 60px 60px, 90px 90px;
+            animation: moveParticles 20s linear infinite;
+        }
+        @keyframes moveParticles {
+            0% { background-position: 0 0, 20px 40px; }
+            100% { background-position: 0 500px, 20px 540px; }
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .stat-badge {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+        .icon-btn {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+        .icon-btn:hover {
+            background: var(--accent-blue);
+            color: var(--bg-deep);
+            transform: scale(1.15) rotate(15deg);
+        }
+        h1 { 
+            font-size: 1.5rem; 
+            background: linear-gradient(to right, #f43f5e, #ec4899, #8b5cf6, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 5px 0; 
+            filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.6));
+        }
+
+        /* ปุ่มสำรับไพ่ 3D นูนๆ เด้งดึ๋ง */
+        .single-deck-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 25px auto;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .deck-card {
+            width: 180px;
+            height: 260px;
+            background: linear-gradient(145deg, #f87171 0%, #dc2626 50%, #991b1b 100%);
+            border: 6px solid #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 0 #7f1d1d, 
+                        0 25px 35px rgba(0,0,0,0.8), 
+                        0 0 30px rgba(239, 68, 68, 0.6),
+                        inset 0 4px 10px rgba(255,255,255,0.6),
+                        inset 0 -4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            animation: floatDeck 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatDeck {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .deck-card::before {
+            content: '♠♥♦♣';
+            font-size: 2.2rem;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .deck-card::after {
+            content: attr(data-count);
+            position: absolute;
+            bottom: -18px;
+            background: linear-gradient(135deg, #fde047 0%, #ca8a04 100%);
+            color: #1e293b;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.6);
+            border: 2px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .deck-card:hover {
+            transform: translateY(-16px) scale(1.05) rotate(1deg);
+            box-shadow: 0 22px 0 #7f1d1d, 
+                        0 35px 50px rgba(0,0,0,0.9), 
+                        0 0 45px rgba(239, 68, 68, 0.9),
+                        inset 0 4px 12px rgba(255,255,255,0.8),
+                        inset 0 -4px 10px rgba(0,0,0,0.4);
+            border-color: var(--accent-gold);
+        }
+
+        .deck-card:hover::after {
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .deck-card:active {
+            transform: translateY(-4px) scale(0.98) !important;
+            box-shadow: 0 5px 0 #7f1d1d, 
+                        0 10px 20px rgba(0,0,0,0.8), 
+                        0 0 20px rgba(239, 68, 68, 0.6),
+                        inset 0 2px 6px rgba(255,255,255,0.4) !important;
+        }
+
+        .deck-card.empty-deck {
+            background: #334155 !important;
+            border-color: #475569 !important;
+            box-shadow: 0 5px 0 #1e293b, 0 10px 20px rgba(0,0,0,0.5) !important;
+            animation: none !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .deck-card.empty-deck::before { content: '🚫'; }
+        .deck-card.empty-deck::after { content: 'ไพ่หมดสำรับ!'; background: #64748b; color: #fff; }
+
+        .restart-deck-btn {
+            display: none;
+            background: linear-gradient(135deg, #f43f5e 0%, #9333ea 100%);
+            color: #fff;
+            font-family: 'Mali', cursive, sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px 25px;
+            border-radius: 16px;
+            border: 2px solid #fff;
+            box-shadow: 0 6px 0 #831843, 0 10px 20px rgba(0,0,0,0.5);
+            cursor: pointer;
+            margin: 15px auto;
+            animation: bounceBtn 0.5s infinite alternate;
+        }
+        @keyframes bounceBtn {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+
+        .back-home-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Mali', cursive, sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px 25px;
+            border-radius: 16px;
+            border: 2px solid #e0f2fe;
+            box-shadow: 0 6px 0 #0369a1, 0 10px 20px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.5);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 5px;
+        }
+        .back-home-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 0 #0369a1, 0 15px 25px rgba(56, 189, 248, 0.4), inset 0 2px 8px rgba(255,255,255,0.8);
+            color: #fff;
+        }
+
+        /* Modal ผลลัพธ์ไพ่ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 17, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal-content {
+            background: #1e293b;
+            border: 2px solid var(--accent-blue);
+            padding: 25px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        }
+        .modal-content h3 { color: var(--accent-blue); margin-top: 0; text-align: center; font-size: 1.3rem; }
+        .rate-item { margin: 8px 0; font-size: 0.85rem; display: flex; justify-content: space-between; }
+
+        /* หน้าจอมินิเกมแยกต่างหากหลังกด START */
+        .minigame-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #312e81 0%, #0f172a 70%, var(--bg-deep) 100%);
+            z-index: 200;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .mg-screen-box {
+            background: rgba(30, 41, 59, 0.95);
+            border: 4px solid var(--accent-gold);
+            padding: 30px 20px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 40px rgba(251, 191, 36, 0.3);
+            animation: popModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popModal {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .mg-screen-title { font-size: 1.25rem; color: var(--accent-gold); margin-bottom: 10px; font-weight: bold; }
+        .mg-rule-text { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 20px; line-height: 1.4; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 12px; }
+        .mg-countdown-display {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #fef08a;
+            margin: 10px 0;
+            text-shadow: 0 0 25px rgba(254, 240, 138, 0.6);
+        }
+        .mg-next-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 16px;
+            width: 100%;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        .mg-next-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+        .mg-exit-btn {
+            background: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            width: 100%;
+            font-family: 'Mali', cursive;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .mg-exit-btn:hover { background: #475569; color: #fff; }
+
+        .popup-card {
+            background: #fff;
+            color: #1e293b;
+            width: 220px;
+            height: 300px;
+            margin: 0 auto 15px auto;
+            border-radius: 20px;
+            border: 4px solid #cbd5e1;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            transform: scale(0.3);
+            animation: popCardSpring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popCardSpring {
+            0% { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .popup-corner { align-self: flex-start; font-size: 1.1rem; font-weight: bold; line-height: 1; }
+        .popup-text { font-size: 0.95rem; font-weight: bold; line-height: 1.4; margin: auto 0; word-break: break-word; }
+
+        /* ดีไซน์การ์ด BOMB สีดำ รูประเบิด */
+        .popup-card.bomb-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%) !important;
+            border: 4px solid #ef4444 !important;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.8) !important;
+            animation: bombPulse 0.5s infinite alternate, popCardSpring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+        /* ดีไซน์การ์ด BIG BOMB สีดำขอบทองคำออร่าแดงเข้ม */
+        .popup-card.big-bomb-card {
+            background: linear-gradient(135deg, #09090b 0%, #18181b 50%, #27272a 100%) !important;
+            border: 5px solid #fbbf24 !important;
+            box-shadow: 0 0 60px rgba(239, 68, 68, 1), inset 0 0 20px rgba(251, 191, 36, 0.5) !important;
+            animation: bigBombPulse 0.4s infinite alternate, popCardSpring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+        @keyframes bigBombPulse {
+            0% { transform: scale(1) rotate(0deg); box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
+            100% { transform: scale(1.03) rotate(1deg); box-shadow: 0 0 70px rgba(239, 68, 68, 1), 0 0 30px rgba(251, 191, 36, 0.8); }
+        }
+        .popup-card.big-bomb-card .popup-corner { color: #fbbf24 !important; }
+        .popup-card.big-bomb-card .popup-text { color: #fef08a !important; }
+
+        @keyframes bombPulse {
+            0% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+            100% { box-shadow: 0 0 50px rgba(239, 68, 68, 1); }
+        }
+        .popup-card.bomb-card .popup-corner { color: #ef4444 !important; }
+        .popup-card.bomb-card .popup-text { color: #f8fafc !important; }
+
+        .popup-card.minigame-card {
+            background: linear-gradient(135deg, #fef08a 0%, #fde047 100%) !important;
+            border: 4px solid #ca8a04 !important;
+            box-shadow: 0 0 35px rgba(253, 224, 71, 0.9) !important;
+        }
+        .popup-card.minigame-card .popup-corner, .popup-card.minigame-card .popup-text { color: #854d0e !important; }
+
+        .popup-card.ssr-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef08a 100%);
+            border: 4px solid #d97706;
+            animation: ssrGlow 0.5s ease-in-out infinite alternate, popCardSpring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+        @keyframes ssrGlow {
+            0% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.8); }
+            100% { box-shadow: 0 0 50px rgba(251, 191, 36, 1); }
+        }
+        .popup-card.ssr-card .popup-corner, .popup-card.ssr-card .popup-text { color: #b45309; }
+
+        .popup-card.sr-card {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border: 4px solid #9333ea;
+        }
+        .popup-card.sr-card .popup-corner, .popup-card.sr-card .popup-text { color: #7e22ce; }
+
+        .popup-card.r-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border: 4px solid #0284c7;
+        }
+        .popup-card.r-card .popup-corner, .popup-card.r-card .popup-text { color: #0369a1; }
+
+        .result-close-btn {
+            background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%);
+            color: #f8fafc;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 14px;
+            width: 100%;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+            transition: transform 0.2s;
+        }
+        .result-close-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-family: 'Mali', cursive;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+        .command-list-container {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 8px;
+            background: rgba(15, 23, 42, 0.7);
+        }
+        .command-row {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .command-row:last-child { border-bottom: none; }
+        
+        .close-modal {
+            background: var(--accent-pink); color: white; border: none;
+            padding: 10px 15px; border-radius: 12px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; cursor: pointer;
+            transition: background 0.2s; font-size: 1rem;
+        }
+        .close-modal:hover { background: #e11d48; }
+
+        .ssr { color: #b45309; text-shadow: 0 1px 3px rgba(251, 191, 36, 0.4); }
+        .sr { color: #7e22ce; }
+        .r { color: #0369a1; }
+        .mg { color: #ca8a04; font-weight: bold; }
+        .bomb { color: #ef4444; font-weight: bold; }
+        .big-bomb { color: #fbbf24; font-weight: bold; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <div class="wrapper">
+        <div>
+            <div class="top-bar">
+                <div class="stat-badge" id="drawCounter">🃏 ไพ่เหลือในสำรับ: 121 ใบ</div>
+                <div class="btn-group">
+                    <button class="icon-btn" onclick="openAllCommandsModal()" title="ดูรายการทั้งหมด">📜</button>
+                    <button class="icon-btn" onclick="openRateModal()" title="ดูเรท">?</button>
+                </div>
+            </div>
+            <h1>🃏 Poker Swaggie By : Hunn</h1>
+            <p id="instruction" style="color: #94a3b8; font-size: 0.9rem; margin: 4px 0;">เชิญเล่นกันได้เลยครับ Broooo!!</p>
+        </div>
+
+        <!-- ปุ่มสำรับไพ่ 3D นูนๆ เด้งดึ๋ง -->
+        <div class="single-deck-container" id="deckContainer" onclick="drawCard()">
+            <div class="deck-card" id="deckCard" data-count="เหลือ 121 ใบ"></div>
+        </div>
+
+        <!-- ปุ่มเริ่มเกมใหม่เมื่อไพ่หมด -->
+        <button class="restart-deck-btn" id="restartBtn" onclick="resetDeck()">🔄 สับสำรับและเริ่มเกมใหม่</button>
+
+        <div>
+            <a href="index.html" class="back-home-btn">🏠 กลับสู่หน้าแรก</a>
+        </div>
+    </div>
+
+    <!-- Modal ผลลัพธ์ไพ่ -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="popup-card" id="popupCard">
+                <div class="popup-corner" id="popupCorner">A♠</div>
+                <div class="popup-text" id="popupText">คำสั่งวงเหล้า</div>
+                <div class="popup-corner" id="popupCornerBottom" style="transform: rotate(180deg);">A♠</div>
+            </div>
+            <button class="result-close-btn" id="modalActionButton" onclick="handleModalAction()">ลุยต่อเลย! 🍻</button>
+        </div>
+    </div>
+
+    <!-- หน้าจอมินิเกมแยกต่างหากหลังกด START -->
+    <div class="minigame-screen" id="mgScreen">
+        <div class="mg-screen-box">
+            <div class="mg-screen-title" id="mgScreenTitle">🎮 มินิเกมทวนคำ</div>
+            <div class="mg-rule-text" id="mgScreenRule">พูดทวนคำศัพท์ของทุกคนก่อนหน้า + เพิ่มของตัวเองใน 20 วิ!</div>
+            <div class="mg-countdown-display" id="mgCountdown">20</div>
+            <button class="mg-next-btn" onclick="nextPersonTurn()">👉 คนต่อไป (รีเซ็ต 20 วิ)</button>
+            <button class="mg-exit-btn" onclick="closeMgScreen()">❌ จบมินิเกมนี้</button>
+        </div>
+    </div>
+
+    <!-- Modal เรท -->
+    <div class="modal" id="rateModal">
+        <div class="modal-content">
+            <h3>📊 อัตราการออกเรท (สำรับ 121 ใบ)</h3>
+            <div class="rate-item"><span class="big-bomb" style="font-weight: bold;">💥 BIG BOMB (You Die!)</span><span>1 ใบ</span></div>
+            <div class="rate-item"><span class="ssr" style="font-weight: bold;">🟡 ระดับ SSR (18+)</span><span>5 ใบ</span></div>
+            <div class="rate-item"><span class="bomb" style="font-weight: bold;">💣 การ์ด BOMB (ตูมม!)</span><span>10 ใบ</span></div>
+            <div class="rate-item"><span class="mg" style="font-weight: bold;">⭐ มินิเกมป่วนวง</span><span>10 ใบ</span></div>
+            <div class="rate-item"><span class="sr" style="font-weight: bold; color: #c084fc;">🟣 ระดับ SR (เสียงดีขึ้น)</span><span>25 ใบ</span></div>
+            <div class="rate-item"><span class="r" style="font-weight: bold; color: #38bdf8;">🟢 ระดับ R (เสียงธรรมดา)</span><span>70 ใบ</span></div>
+            <button class="close-modal" onclick="closeRateModal()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <!-- Modal คลังคำสั่ง -->
+    <div class="modal" id="commandsModal">
+        <div class="modal-content">
+            <h3>📜 คลังภารกิจทั้งหมด (121 ใบ)</h3>
+            <input type="text" id="searchCommand" class="search-box" placeholder="🔍 ค้นหาคำสั่ง..." onkeyup="filterCommands()">
+            <div class="command-list-container" id="commandListContainer"></div>
+            <button class="close-modal" onclick="closeAllCommandsModal()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // ฟังก์ชันสร้างเสียงเอฟเฟกต์แยกตามเรทไพ่
+        function playCardSound(rarity) {
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            let now = audioCtx.currentTime;
+
+            if (rarity === 'r') {
+                // R: เสียงธรรมดา ใสๆ สั้นๆ
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+
+            } else if (rarity === 'sr') {
+                // SR: เสียงที่ดีขึ้น โน้ตคู่กังวาน
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+
+            } else if (rarity === 'ssr' || rarity === 'minigame') {
+                // SSR: เสียงเท่ๆ กังวานอลังการ
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                osc.frequency.setValueAtTime(1046.50, now + 0.3);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+
+            } else if (rarity === 'bomb') {
+                // BOMB: เสียงตูมมม ต่ำทุ้มสะใจ
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+                osc.start(now); osc.stop(now + 0.45);
+
+            } else if (rarity === 'big-bomb') {
+                // BIG BOMB: เสียงตู้มมม + โน้ตหงอยแพ้เกม (You Die - Womp Womp)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.5);
+                gain.gain.setValueAtTime(0.6, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+
+                // เสียง You Die หงอยๆ ต่อท้ายทันที (Womp Womp)
+                setTimeout(() => {
+                    let osc2 = audioCtx.createOscillator();
+                    let gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.type = 'sine';
+                    
+                    let t = audioCtx.currentTime;
+                    osc2.frequency.setValueAtTime(250, t); // โน้ตตก
+                    osc2.frequency.setValueAtTime(200, t + 0.25); // โน้ตตกซ้ำแบบหงอยๆ
+                    gain2.gain.setValueAtTime(0.3, t);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    osc2.start(t); osc2.stop(t + 0.5);
+                }, 500);
+            }
+        }
+
+        const masterItems = [
+            // --- BIG BOMB !!! ---
+            { name: '💥 BIG BOMB !!! (ULTRA x10) 💥<br><span style="font-size:0.8rem; color:#fef08a;">วินาศสันตะโรขั้นสุด! เจ้าของตาต้องกระดกหมดแก้วรวดเดียว 3 แก้วติด + สั่งทุกคนในวงดื่มคนละ 5 เป๊ก และสลับแก้วกับคนทางขวาถาวร!</span>', rarity: 'big-bomb', isChainGame: false },
+
+            // --- BOMB 10 ใบ ---
+            { name: '💣 BOMB!<br><span style="font-size:0.8rem; color:#f8fafc;">ตู้มม! ระเบิดลงกลางกบาล! ดื่มรวดเดียว 3 เป๊กแบบห้ามพัก!</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">ระเบิดนิวเคลียร์ลง! ต้องดื่มหมดแก้วตัวเองทันที + โดนคนซ้ายสั่งทำโทษอีก 1 อย่าง</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">สะเก็ดระเบิดทะลุร่าง! คุณและคนนั่งขวาต้องดื่มคนละ 3 เป๊กพร้อมกัน</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">ระเบิดเวลาทำงาน! ส่งแก้วของคุณให้คนซ้ายกระดกให้หมดเกลี้ยงในอึกเดียว</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">วงแตกพ่ายระเบิดตู้ม! ทุกคนในวงต้องยกแก้วตัวเองดื่มรวดเดียวหมดแก้ว!</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">มิสซายล์ถล่ม! เจ้าของตารับเคราะห์หนัก ดื่มคูณสาม (3 แก้วเน้นๆ)</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">ระเบิดล้างบางคนโสด! คนโสดทุกคนในวงต้องดื่มคนละ 3 เป๊ก (ถ้าไม่มีคนโสด คุณดื่มแทนหมด)</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">กับระเบิดฝังดิน! เป็นใบ้ห้ามพูด 5 ตาเต็ม ใครเผลอหลุดปากพูดแม้แต่คำเดียว ดื่ม 2 เป๊ก!</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">กู้ระเบิดพลาดเป้า! ต้องยอมให้ทุกคนในวงรุมแกล้งสั่งทำโทษตามใจชอบคนละ 1 อย่าง</span>', rarity: 'bomb', isChainGame: false },
+            { name: '💣 BOMB!<br><span style="font-size:0.85rem; color:#f8fafc;">ระเบิดทำลายล้างสมอง! สลับที่นั่งและสลับแก้วกับคนตรงข้ามทันที แล้วดื่มล้างซวย 2 เป๊ก</span>', rarity: 'bomb', isChainGame: false },
+
+            // --- 10 มินิเกม ---
+            { name: '⭐ [มินิเกม] จังหวัดวนต่อ: พูดชื่อจังหวัด + ทวนของเก่าวนไป ใครลืมดื่ม 2 เป๊ก!', rarity: 'minigame', isChainGame: true },
+            { name: '⭐ [มินิเกม] สัตว์โลกน่ารัก: พูดชื่อสัตว์ + ทวนชื่อสัตว์ทั้งหมดเรียงตัว ใครลิ้นพันดื่ม!', rarity: 'minigame', isChainGame: true },
+            { name: '⭐ [มินิเกม] ของในเซเว่น: พูดชื่อสินค้า 7-11 ทวนของเก่าห้ามซ้ำ ใครอึดอัดเกิน 5 วิโดน!', rarity: 'minigame', isChainGame: true },
+            { name: '⭐ [มินิเกม] บวกเลขช้าโดน: บวกเลขสะสมทีละ 1-10 ใครคิดนานเกิน 3 วิหรือบวกผิด ดื่ม!', rarity: 'minigame', isChainGame: true },
+            { name: '⭐ [มินิเกม] เกมนับเลขวิบัติ: ห้ามพูดเลขหาร 3 ลงตัวและมีเลข 3 ให้พูด "ตบโต๊ะ" แทน!', rarity: 'minigame', isChainGame: true },
+            { name: '⭐ [มินิเกม] คำต้องห้ามมหาภัย: สุ่มคำห้ามพูด 5 นาที ใครเผลอพูดโดนซดทันที 1 เป๊ก!', rarity: 'minigame', isChainGame: false },
+            { name: '⭐ [มินิเกม] เกมจ้องตาฆ่าเวลา: เลือก 2 คนจ้องตากันห้ามกระพริบตา/ห้ามขำ ใครแพ้ดื่มคูณสอง!', rarity: 'minigame', isChainGame: false },
+            { name: '⭐ [มินิเกม] แปะมือสลับทิศ: ส่งเสียง "ฮุบ" ส่งต่อจังหวะซ้ายขวา ใครช้าหรือผิดจังหวะโดน!', rarity: 'minigame', isChainGame: false },
+            { name: '⭐ [มินิเกม] ถามปุ๊บตอบปั๊บ: ห้ามตอบคำว่า "ใช่ / ไม่ใช่ / ไม่รู้" เด็ดขาด!', rarity: 'minigame', isChainGame: false },
+            { name: '⭐ [มินิเกม] ใบ้คำท่าทางประหลาด: สุ่มโจทย์แปลกๆ ให้คนใบ้ท่าทางห้ามส่งเสียงภายใน 30 วิ!', rarity: 'minigame', isChainGame: false },
+
+            // --- ระดับ R (70 ข้อ) ---
+            { name: '🟢 รอดตัว! นั่งจิบน้ำเปล่าชิลๆ รอบนี้รอด', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนทางซ้ายดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนทางขขาดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับคนข้างๆ แล้วดื่มพร้อมกัน', rarity: 'r' },
+            { name: '🟢 ส่งยิ้มหวานให้คนตรงข้าม ถ้าขำต้องดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 คนที่อายุน้อยที่สุดในวงต้องดื่ม 1 แก้ว', rarity: 'r' },
+            { name: '🟢 คนที่อายุเยอะที่สุดในวงต้องดื่ม 1 แก้ว', rarity: 'r' },
+            { name: '🟢 ใครใส่เสื้อสีเข้มที่สุดในตอนนี้ ดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 เลือกคนมา 1 คนเพื่อขอบคุณที่มานั่งกินด้วยกัน', rarity: 'r' },
+            { name: '🟢 รอดตาย! แต่วางแก้วไม่ได้จนกว่าตาหน้าจะมา', rarity: 'r' },
+            { name: '🟢 สั่งให้คนนั่งฝั่งตรงข้ามชมคุณ 3 ข้อ', rarity: 'r' },
+            { name: '🟢 จิบเบาๆ ครึ่งแก้วพอ เป็นพิธี', rarity: 'r' },
+            { name: '🟢 รอดแบบงงๆ แถมได้สิทธิ์สั่งคนอื่นพัก 1 ตา', rarity: 'r' },
+            { name: '🟢 ชนแก้วขึ้นแล้วตะโกน "ชนโว้ย!" คนอื่นต้องยกตาม', rarity: 'r' },
+            { name: '🟢 สั่งคนนั่งขวาให้พูดคำว่า "Eiei" เสียงดัง 3 ครั้ง', rarity: 'r' },
+            { name: '🟢 แลกแก้วกับคนซ้าย แล้วดื่มน้ำของเขาครึ่งนึง', rarity: 'r' },
+            { name: '🟢 รอดตัว แต่ต้องทำท่าแมวเหมียว 1 ที', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับทุกคนรอบวงแบบเร็วๆ แล้วดื่ม 1 อึก', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนซ้ายมือให้ทำหน้าทะเล้น 5 วินาที', rarity: 'r' },
+            { name: '🟢 รอด! แจกแต้มบุญให้คนข้างขวาไม่ต้องดื่ม', rarity: 'r' },
+            { name: '🟢 สั่งคนโสดในวงดื่มอวยพรความเหงา 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 คนที่มีแฟนแล้วในวงดื่ม 1 เป๊ก (คนโสดรอด)', rarity: 'r' },
+            { name: '🟢 รอดตาย แต่ต้องเอามือแตะจมูกไว้จนกว่าจะถึงตาหน้า', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับตัวเองหน้ากระจกหรือโทรศัพท์ 1 ที', rarity: 'r' },
+            { name: '🟢 รอดตัวแบบใสๆ นั่งดูคนอื่นวงแตก', rarity: 'r' },
+            { name: '🟢 สั่งให้เพื่อนซ้ายมือพูดภาษาเอเลี่ยน 1 ประโยค', rarity: 'r' },
+            { name: '🟢 รอด! แถมได้สิทธิ์เลือกเพลงเปิดรอบต่อไป', rarity: 'r' },
+            { name: '🟢 คนที่แบตมือถือเหลือน้อยที่สุด ดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 สั่งคนขวามือทำท่าเต้นกวนๆ 1 ท่า', rarity: 'r' },
+            { name: '🟢 รอดชีวิต ปลอดภัย ไร้รอยขีดข่วน', rarity: 'r' },
+            { name: '🟢 สั่งคนตรงข้ามให้เล่าเรื่องตลก 1 เรื่อง', rarity: 'r' },
+            { name: '🟢 เปลี่ยนท่าทางท่านั่งให้แปลกที่สุด 1 ตา', rarity: 'r' },
+            { name: '🟢 จิบน้ำเปล่าล้างคอ 1 แก้วเพื่อเตรียมรับศึกหนักตาหน้า', rarity: 'r' },
+            { name: '🟢 สั่งให้คนข้างซ้ายนวดไหล่ให้ 10 วินาที', rarity: 'r' },
+            { name: '🟢 รอดตัว! แถมเลือกคนในวงมาเป็นบอดี้การ์ดส่วนตัว 1 ตา', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนซ้ายมือให้เซลฟีหน้าแปลกๆ ส่งเข้ากลุ่ม', rarity: 'r' },
+            { name: '🟢 คนที่ใส่แว่นในวงดื่ม 1 เป๊ก (ถ้าไม่มีใครใส่ คนสั่งดื่มเอง)', rarity: 'r' },
+            { name: '🟢 สั่งให้คนขวามือทำเสียงสัตว์อะไรก็ได้ 3 ครั้ง', rarity: 'r' },
+            { name: '🟢 รอดแบบหล่อๆ นั่งดูคนอื่นโดนทำโทษ', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับคนตรงข้ามแล้วสลับที่นั่งกัน 1 ตา', rarity: 'r' },
+            { name: '🟢 สั่งให้คนซ้ายชมข้อดีของคุณ 2 ข้อ', rarity: 'r' },
+            { name: '🟢 รอดตัว! แต่ต้องพูดคำว่า "แฮ่" ทุกครั้งก่อนหยิบแก้ว', rarity: 'r' },
+            { name: '🟢 คนที่ตื่นเช้าที่สุดในวันนี้ ดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 คนที่นอนดึกที่สุดในเมื่อคืน ดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 สั่งคนนั่งฝั่งขวาให้ทำหน้าบึ้งตึงใส่คุณ 10 วินาที', rarity: 'r' },
+            { name: '🟢 รอดปลอดภัย ส่งยิ้มพิมพ์ใจให้คนซ้าย 1 ที', rarity: 'r' },
+            { name: '🟢 สั่งให้ทุกคนในวงปรบมือให้คุณ 3 ครั้ง', rarity: 'r' },
+            { name: '🟢 จิบเบาๆ เติมพลังเพื่อลุยตาสอง', rarity: 'r' },
+            { name: '🟢 รอดตายแบบเฉียดฉิว รอดตัวไปหนึ่งเป๊ก', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนตรงข้ามทำท่าโบกมือลาแบบนางงาม', rarity: 'r' },
+            { name: '🟢 ใครไว้ผมสั้นกว่าเพื่อนคนอื่นในวง ดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 สั่งให้คนข้างๆ เล่ามุกแป้ก 1 มุก', rarity: 'r' },
+            { name: '🟢 รอดตัว! แถมได้สิทธิ์สั่งพักการดื่ม 1 ตา', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนซ้ายมือทำท่าลิงอุ้มแตง 5 วินาที', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับคนที่นั่งไกลคุณที่สุดในวง', rarity: 'r' },
+            { name: '🟢 รอดแบบใสๆ นั่งฟังเพลงชิลๆ', rarity: 'r' },
+            { name: '🟢 สั่งคนขวาให้เอามือประสานหัวใจ 3 วินาที', rarity: 'r' },
+            { name: '🟢 คนที่ใส่กางเกงขายาวดื่ม 1 เป๊ก', rarity: 'r' },
+            { name: '🟢 รอดตัว! สั่งให้คนซ้ายกินน้ำตาม 1 อึก', rarity: 'r' },
+            { name: '🟢 ส่งเสียงร้อง "เมี๊ยว" ดังๆ 1 ครั้งแล้วรอด', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนตรงข้ามทำท่าทำความเคารพแบบทหาร', rarity: 'r' },
+            { name: '🟢 รอดตายแบบปาฏิหาริย์', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับคนซ้ายขวาพร้อมกันแล้วดื่ม', rarity: 'r' },
+            { name: '🟢 สั่งคนโสดในวงทำหน้าเศร้า 3 วินาที', rarity: 'r' },
+            { name: '🟢 รอดตัว! สั่งคนขวาลุกขึ้นยืนแล้วนั่งลง', rarity: 'r' },
+            { name: '🟢 ยิ้มกว้างๆ ให้คนรอบวงแล้วรอดตัวรอบนี้', rarity: 'r' },
+            { name: '🟢 สั่งเพื่อนซ้ายมือทำท่านอนหลับ 5 วินาที', rarity: 'r' },
+            { name: '🟢 รอดตัวแบบสวยงาม ไร้รอยขีดข่วน', rarity: 'r' },
+            { name: '🟢 ชนแก้วกับตัวเองเบาๆ แล้วดื่มน้ำเปล่า', rarity: 'r' },
+            { name: '🟢 รอดตาย! ปลอดภัยไร้แอลกอฮอล์รอบนี้', rarity: 'r' },
+
+            // --- ระดับ SR (25 ข้อ) ---
+            { name: '🟣 โดนเต็มๆ! ดื่มเอง 1 แก้วเต็ม', rarity: 'sr' },
+            { name: '🟣 จ้องตากับคนตรงข้าม ใครกระพริบตาหรือขำก่อน ดื่ม 2 แก้ว', rarity: 'sr' },
+            { name: '🟣 ตอบความลับเรื่องฮาๆ หรือเรื่องโป๊ะๆ 1 เรื่อง', rarity: 'sr' },
+            { name: '🟣 ตั้งกฏเหล็กห้ามพูดคำว่า "ครับ/ค่ะ" 10 นาที ใครเผลอพูดดื่ม', rarity: 'sr' },
+            { name: '🟣 แฉแฟนเก่าคนแรก หรือเล่าเรื่องจีบสาว/จีบหนุ่มครั้งแรก', rarity: 'sr' },
+            { name: '🟣 สภาพ! ต้องโดนป้อนน้ำโดยคนนั่งซ้ายมือ 1 เป๊ก', rarity: 'sr' },
+            { name: '🟣 โทรหาเบอร์แปลกในมือถือแล้วบอกว่า "คิดถึงนะ"', rarity: 'sr' },
+            { name: '🟣 โพสต์สตอรี่รูปแก้วเหล้าพร้อมแคปชัน "โสดโปรดจีบ"', rarity: 'sr' },
+            { name: '🟣 สารภาพบาป! เคยแอบชอบเพื่อนในกลุ่มคนไหน ยอมรับมา', rarity: 'sr' },
+            { name: '🟣 เปิดแกลเลอรีให้ทุกคนดูรูปถ่ายล่าสุด ห้ามปฏิเสธ!', rarity: 'sr' },
+            { name: '🟣 ทำท่าเซ็กซี่เร้าใจใส่คนนั่งขวามือ 5 วินาที', rarity: 'sr' },
+            { name: '🟣 เปิดแชทไลน์ล่าสุดที่คุยด้วยให้คนข้างๆ อ่าน 3 วินาที', rarity: 'sr' },
+            { name: '🟣 ต้องพูดลงท้ายด้วยคำว่า "เพคะ/พ่ะย่ะค่ะ" ทุกคำ', rarity: 'sr' },
+            { name: '🟣 ส่งเสียงร้องเพลงดังๆ 1 ท่อนทันทีแบบไม่ทันตั้งตัว', rarity: 'sr' },
+            { name: '🟣 ยอมให้คนในวงตั้งฉายาใหม่ และต้องใช้ตลอดคืนนี้', rarity: 'sr' },
+            { name: '🟣 โดนทำโทษ นั่งหลับตาให้เพื่อนรุมแกล้งเอาป้ายแปะหน้า', rarity: 'sr' },
+            { name: '🟣 สลับที่นั่งกับใครก็ได้ในวงทันที 1 ตา', rarity: 'sr' },
+            { name: '🟣 ตอบคำถาม 18+ จากคนทางขวามือแบบห้ามโกหก', rarity: 'sr' },
+            { name: '🟣 ถอดรองเท้าข้างนึงออกแล้ววางไว้บนตักตัวเอง 1 ตา', rarity: 'sr' },
+            { name: '🟣 ดื่มคูณสอง! แก้วนี้จัดไปเน้นๆ 2 เป๊กติด', rarity: 'sr' },
+            { name: '🟣 แกล้งทำเสียงเด็กทารกงอแงขอขวดนม 30 วินาที', rarity: 'sr' },
+            { name: '🟣 เลือกคนในวงมา 1 คนเพื่อประสานสายตาแล้วบอกรักหวานซึ้ง', rarity: 'sr' },
+            { name: '🟣 โชว์รอยสักหรือแผลเป็นที่ลับที่สุดในร่างกายให้คนข้างๆ ดู', rarity: 'sr' },
+            { name: '🟣 สั่งเพื่อนทางขวาให้หอมแก้มคุณเบาๆ 1 ที (หรือดื่มเอง 2 เป๊ก)', rarity: 'sr' },
+            { name: '🟣 สารภาพความจริงว่าแอบส่องไอจีใครบ่อยที่สุดในรอบสัปดาห์', rarity: 'sr' },
+
+            // --- ระดับ SSR (5 ข้อ) ---
+            { name: '🟡 👑 กษัตริย์สั่งตาย! สั่งใครในวงดื่มกี่แก้วก็ได้ตามใจชอบ', rarity: 'ssr' },
+            { name: '🟡 🌪️ หมุนวนซ้าย! ทุกคนในวงต้องยกแก้วตัวเองดื่มพร้อมกัน', rarity: 'ssr' },
+            { name: '🟡 🔥 สั่งถอด! ถอดเครื่องประดับหรือเสื้อผ้าออก 1 ชิ้น (หรือดื่ม 3 เป๊ก)', rarity: 'ssr' },
+            { name: '🟡 💋 จุ๊บปากคนนั่งซ้ายหรือขวามือ 1 ครั้งแบบเน้นๆ (หรือดื่มหมดแก้วคูณสอง)', rarity: 'ssr' },
+            { name: '🟡 🔞 แฉสเปกบนเตียงหรือเล่าประสบการณ์ 18+ แซ่บๆ ของตัวเอง 1 เรื่อง', rarity: 'ssr' }
+        ];
+
+        let deck = [];
+        let currentDrawnCard = null;
+        let mgInterval;
+        let mgTimeLeft = 20;
+        const suits = ['♠', '♥', '♦', '♣'];
+        const ranks = ['A', '10', 'J', 'Q', 'K'];
+
+        function initDeck() {
+            deck = [...masterItems];
+            for (let i = deck.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            updateDeckUI();
+        }
+
+        function updateDeckUI() {
+            let deckCard = document.getElementById('deckCard');
+            let restartBtn = document.getElementById('restartBtn');
+            let deckContainer = document.getElementById('deckContainer');
+
+            if (deck.length > 0) {
+                deckCard.className = "deck-card";
+                deckCard.setAttribute("data-count", `เหลือ ${deck.length} ใบ`);
+                restartBtn.style.display = "none";
+                deckContainer.style.pointerEvents = "auto";
+                document.getElementById('drawCounter').innerText = `🃏 ไพ่เหลือในสำรับ: ${deck.length} ใบ`;
+            } else {
+                deckCard.className = "deck-card empty-deck";
+                deckCard.setAttribute("data-count", "หมดสำรับแล้ว!");
+                restartBtn.style.display = "inline-block";
+                deckContainer.style.pointerEvents = "none";
+                document.getElementById('drawCounter').innerText = `🃏 ไพ่หมดสำรับแล้ว!`;
+            }
+        }
+
+        function resetDeck() {
+            initDeck();
+            document.getElementById('instruction').innerHTML = "✨ สับสำรับไพ่ใหม่ 121 ใบเรียบร้อย ลุยต่อเลย!";
+        }
+
+        function openRateModal() { document.getElementById('rateModal').style.display = 'flex'; }
+        function closeRateModal() { document.getElementById('rateModal').style.display = 'none'; }
+        function openAllCommandsModal() {
+            renderCommandList(masterItems);
+            document.getElementById('commandsModal').style.display = 'flex';
+        }
+        function closeAllCommandsModal() { document.getElementById('commandsModal').style.display = 'none'; }
+
+        function renderCommandList(list) {
+            let container = document.getElementById('commandListContainer');
+            container.innerHTML = '';
+            list.forEach((item, index) => {
+                let badgeClass = item.rarity;
+                if(item.rarity === 'minigame') badgeClass = 'mg';
+                if(item.rarity === 'big-bomb') badgeClass = 'big-bomb';
+                let div = document.createElement('div');
+                div.className = 'command-row';
+                div.innerHTML = `<span>${index + 1}. ${item.name}</span> <span class="${badgeClass}">${item.rarity.toUpperCase()}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function filterCommands() {
+            let keyword = document.getElementById('searchCommand').value.toLowerCase();
+            let filtered = masterItems.filter(i => i.name.toLowerCase().includes(keyword));
+            renderCommandList(filtered);
+        }
+
+        function drawCard() {
+            if (deck.length === 0) return;
+
+            currentDrawnCard = deck.pop();
+            updateDeckUI();
+
+            // เล่นเสียงเอฟเฟกต์แยกตามระดับการ์ดที่จั่วได้ทันที!
+            playCardSound(currentDrawnCard.rarity);
+
+            let popupCard = document.getElementById('popupCard');
+            let popupCorner1 = document.getElementById('popupCorner');
+            let popupCorner2 = document.getElementById('popupCornerBottom');
+            let popupText = document.getElementById('popupText');
+            let actionBtn = document.getElementById('modalActionButton');
+
+            if (currentDrawnCard.rarity === 'big-bomb') {
+                popupCorner1.innerHTML = `💥<br>BIG`;
+                popupCorner2.innerHTML = `💥<br>BIG`;
+                popupCorner1.style = "color: #fbbf24;";
+                popupCorner2.style = "color: #fbbf24;";
+                popupText.innerHTML = currentDrawnCard.name;
+                popupCard.className = `popup-card big-bomb-card`;
+                actionBtn.innerHTML = "YOU DIE! 💥💥";
+            } else if (currentDrawnCard.rarity === 'bomb') {
+                popupCorner1.innerHTML = `💣<br>BOMB`;
+                popupCorner2.innerHTML = `💣<br>BOMB`;
+                popupCorner1.style = "color: #ef4444;";
+                popupCorner2.style = "color: #ef4444;";
+                popupText.innerHTML = currentDrawnCard.name;
+                popupCard.className = `popup-card bomb-card`;
+                actionBtn.innerHTML = "ตู้ม! โดนเต็มๆ 💥";
+            } else {
+                let randomSuit = suits[Math.floor(Math.random() * suits.length)];
+                let randomRank = ranks[Math.floor(Math.random() * ranks.length)];
+                let suitColor = (randomSuit === '♥' || randomSuit === '♦') ? 'color: #dc2626;' : 'color: #0f172a;';
+
+                popupCorner1.innerHTML = `${randomRank}<br>${randomSuit}`;
+                popupCorner2.innerHTML = `${randomRank}<br>${randomSuit}`;
+                popupCorner1.style = suitColor;
+                popupCorner2.style = suitColor;
+                popupText.innerHTML = currentDrawnCard.name;
+
+                if (currentDrawnCard.rarity === 'minigame') {
+                    popupCard.className = `popup-card minigame-card`;
+                    actionBtn.innerHTML = currentDrawnCard.isChainGame ? "START 🚀" : "ลุยต่อเลย! 🍻";
+                } else {
+                    popupCard.className = `popup-card ${currentDrawnCard.rarity}-card`;
+                    actionBtn.innerHTML = "ลุยต่อเลย! 🍻";
+                }
+            }
+
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function handleModalAction() {
+            document.getElementById('resultModal').style.display = 'none';
+
+            if (currentDrawnCard && currentDrawnCard.rarity === 'minigame' && currentDrawnCard.isChainGame) {
+                document.getElementById('mgScreenTitle').innerText = `🎮 ${currentDrawnCard.name.split(':')[0]}`;
+                document.getElementById('mgScreenRule').innerText = currentDrawnCard.name;
+                startMgTimer();
+                document.getElementById('mgScreen').style.display = 'flex';
+            }
+        }
+
+        function startMgTimer() {
+            clearInterval(mgInterval);
+            mgTimeLeft = 20;
+            document.getElementById('mgCountdown').innerText = mgTimeLeft;
+
+            mgInterval = setInterval(() => {
+                mgTimeLeft--;
+                if (mgTimeLeft >= 0) {
+                    document.getElementById('mgCountdown').innerText = mgTimeLeft;
+                } else {
+                    clearInterval(mgInterval);
+                    document.getElementById('mgCountdown').innerText = "⏰ หมดเวลา!";
+                    playCardSound('bomb');
+                }
+            }, 1000);
+        }
+
+        function nextPersonTurn() {
+            startMgTimer();
+        }
+
+        function closeMgScreen() {
+            clearInterval(mgInterval);
+            document.getElementById('mgScreen').style.display = 'none';
+        }
+
+        window.onload = function() {
+            initDeck();
+        };
+    </script>
+</body>
+</html>

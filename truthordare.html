@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Truth or Dare - Poker Swaggie By : Hunnn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --accent-pink: #f43f5e;
+            --accent-purple: #9333ea;
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+        }
+        body { 
+            font-family: 'Mali', cursive, sans-serif; 
+            background: radial-gradient(circle at center, #2e1065 0%, #0f172a 60%, var(--bg-deep) 100%); 
+            color: #f8fafc; 
+            padding: 15px; 
+            max-width: 500px; 
+            margin: auto; 
+            text-align: center; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.8) 1px, transparent 0),
+                radial-gradient(rgba(236, 72, 153, 0.5) 1.5px, transparent 0);
+            background-size: 50px 50px, 80px 80px;
+            animation: moveParticles 25s linear infinite;
+        }
+        @keyframes moveParticles {
+            0% { background-position: 0 0, 10px 30px; }
+            100% { background-position: 0 400px, 10px 430px; }
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95vh;
+        }
+
+        #setupScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .setup-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid var(--accent-pink);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(244, 63, 94, 0.3);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+        }
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .player-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .player-input-row input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-family: 'Mali', cursive;
+            outline: none;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #475569;
+            font-family: 'Mali', cursive;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        .start-game-btn {
+            background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+            color: #fff; border: none; padding: 12px; border-radius: 14px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(244, 63, 94, 0.4); margin-top: 10px;
+        }
+
+        #gameScreen {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .selected-player-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 3px solid var(--accent-gold);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(251, 191, 36, 0.3);
+        }
+        .target-name {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin: 5px 0 15px 0;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .choice-btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .choice-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border-radius: 16px;
+            font-family: 'Mali', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s, filter 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .btn-truth {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #fff;
+            border: 2px solid #93c5fd;
+        }
+        .btn-dare {
+            background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+            color: #fff;
+            border: 2px solid #fda4af;
+        }
+        .choice-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        h1 { 
+            font-size: 1.5rem; 
+            background: linear-gradient(to right, #f43f5e, #c084fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 5px 0; 
+        }
+
+        .back-home-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+            color: #fff; text-decoration: none; font-family: 'Mali', cursive; font-weight: bold; font-size: 0.85rem;
+            padding: 8px 16px; border-radius: 12px; border: 2px solid #cbd5e1; margin-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.88);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal-content {
+            background: #0f172a; border: 3px solid var(--accent-pink); padding: 25px; border-radius: 25px;
+            width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+            animation: popModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popModal {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-title { font-size: 1.2rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 10px; }
+        .modal-text { font-size: 1rem; line-height: 1.5; color: #f8fafc; margin: 20px 0; background: rgba(30, 41, 59, 0.7); padding: 15px; border-radius: 15px; text-align: left; }
+        .next-turn-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff; border: none; padding: 12px; border-radius: 14px; width: 100%;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <div class="wrapper">
+        <div id="setupScreen">
+            <div class="setup-box">
+                <h1>🔥 Truth or Dare (100 ข้อจัดเต็ม) 🔥</h1>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">ใส่ชื่อเพื่อนๆ ในตี้เพื่อสุ่มผู้โชคดีมารับบท</p>
+                <label style="font-size: 0.9rem; display: block; text-align: left; margin-bottom: 5px;">จำนวนผู้เล่น:</label>
+                <select id="playerCountSelect" onchange="generatePlayerInputs()">
+                    <option value="2">2 คน</option>
+                    <option value="3">3 คน</option>
+                    <option value="4" selected>4 คน</option>
+                    <option value="5">5 คน</option>
+                    <option value="6">6 คน</option>
+                    <option value="7">7 คน</option>
+                    <option value="8">8 คน</option>
+                </select>
+                <div class="player-inputs" id="playerInputsContainer"></div>
+                <button class="start-game-btn" onclick="startGame()">🚀 เริ่มเกมวัดใจ!</button>
+                <div style="margin-top: 15px;">
+                    <a href="index.html" class="back-home-btn">🏠 กลับหน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameScreen">
+            <div>
+                <h1>🔥 Truth or Dare 🔥</h1>
+                <p style="color: #94a3b8; font-size: 0.85rem;">โหมดคำถาม & คำสั่ง 100 ข้อ (ธรรมดา & 18+ จัดเต็ม)</p>
+            </div>
+
+            <div class="selected-player-card">
+                <div style="font-size: 0.9rem; color: #93c5fd;">🎯 ผู้โชคดีในตานี้คือ...</div>
+                <div class="target-name" id="currentTargetName">-</div>
+                
+                <div class="choice-btn-container">
+                    <button class="choice-btn btn-truth" onclick="pickCard('truth')">💡 TRUTH (ความจริง)</button>
+                    <button class="choice-btn btn-dare" onclick="pickCard('dare')">🔥 DARE (คำท้า)</button>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="backToSetup()" class="back-home-btn" style="background: #1e293b; border-color: #475569;">👥 เปลี่ยนรายชื่อผู้เล่น</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-title" id="resultModalTitle">💡 TRUTH</div>
+            <div class="modal-text" id="resultModalText">ข้อความ...</div>
+            <button class="next-turn-btn" onclick="closeModalAndNext()">👉 สุ่มคนถัดไป</button>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let activePlayer = "";
+
+        // 100 ข้อ Truth (ผสมธรรมดา + 18+)
+        const truthList = [
+            // ธรรมดา / ฮาๆ (1-50)
+            "สารภาพมาซะดีๆ ว่าแอบชอบใครอยู่ตอนนี้ในกลุ่มนี้ไหม?",
+            "เรื่องลับสุดยอดที่ไม่เคยบอกใครเลยในชีวิตคืออะไร?",
+            "ถ้าต้องสลับร่างกับคนทางขวา 1 วัน จะทำอะไรเป็นอย่างแรก?",
+            "วีรกรรมสุดโป๊ะหรือน่าอายที่สุดสมัยเรียนคืออะไร?",
+            "เคยแอบส่องแฟนเก่าของเพื่อนสนิทตัวเองบ้างไหม?",
+            "ถ้าวันนี้ต้องเลือกจูบคนในวง จะเลือกใครเพราะอะไร?",
+            "ความลับอะไรที่โกหกเนียนที่สุดแล้วพ่อแม่ไม่เคยรู้?",
+            "โทรศัพท์ในมือถือ มีรูปอะไรที่ถ้าคนอื่นเห็นแล้วต้องช็อก?",
+            "สเปคคนที่ชอบจริงๆ แบบไม่สนหน้าตาคือแบบไหน?",
+            "เคยคิดจะเลิกคบเพื่อนคนไหนในวงเพราะอะไร เมาท์มา!",
+            "สิ่งไร้สาระที่สุดที่เคยเสียเงินซื้อคืออะไร?",
+            "ถ้ามีเงิน 10 ล้านใน 24 ชม. จะเอาไปทำอะไรบ้าง?",
+            "วีรกรรมเมาแล้วเละที่สุดในชีวิตคืออะไร เล่าให้ฟังหน่อย",
+            "เคยแอบเอาของคนอื่นไปใช้โดยไม่ขออนุญาตไหม?",
+            "ฉายาตลกๆ ที่เพื่อนเคยตั้งให้ตอนเด็กคืออะไร?",
+            "ถ้าเลือกได้อยากมีพลังวิเศษอะไรเพราะอะไร?",
+            "เคยแอบร้องไห้เพราะเรื่องดูซีรีส์หรือการ์ตูนเรื่องไหนล่าสุด?",
+            "ถ้าต้องติดเกาะกับคนในวง 3 คน จะเลือกใครบ้าง?",
+            "นิสัยแย่ๆ ของตัวเองที่อยากแก้แต่แก้ไม่หายคืออะไร?",
+            "เคยแกล้งทำเป็นป่วยเพื่อโดนเรียนหรือโดนงานไหม?",
+            "สบถคำหยาบครั้งล่าสุดในใจคือเรื่องอะไร?",
+            "เคยแอบชอบครูหรืออาจารย์ตอนเรียนไหม?",
+            "ถ้าพรุ่งนี้โลกแตก อาหารมื้อสุดท้ายที่จะกินคืออะไร?",
+            "เรื่องตลกที่ทำให้ขำก๊ากจนฉี่จะราดคือเรื่องอะไร?",
+            "เคยแอบเกลียดใครตั้งแต่แรกเจอไหม เพราะอะไร?",
+            "ถ้าต้องแต่งหญิงหรือแต่งชาย 1 วัน กล้าทำไหม?",
+            "เคยทำของพังแล้วโยนความผิดให้คนอื่นไหม?",
+            "ความฝันที่ประหลาดที่สุดเท่าที่เคยฝันมาคืออะไร?",
+            "ถ้าต้องเป็นตัวละครในหนัง จะเป็นใคร?",
+            "สิ่งแรกที่จะทำถ้าตื่นมาแล้วกลายเป็นเพศตรงข้ามคืออะไร?",
+            "เคยแอบดูโทรศัพท์ของแฟนหรือคนคุยไหม?",
+            "วีรกรรมความซุ่มซ่ามที่เจ็บตัวที่สุดคืออะไร?",
+            "ถ้าแฟนขอเลิกด้วยเหตุผลไร้สาระ จะง้อหรือปล่อยเลย?",
+            "เคยโกหกเรื่องอายุหรือส่วนสูงของตัวเองไหม?",
+            "วิชาที่เกลียดที่สุดตอนเรียนคือวิชาอะไร?",
+            "เคยแอบกินของในตู้เย็นของคนอื่นแล้วเนียนไหม?",
+            "ความสามารถพิเศษแปลกๆ ที่คนอื่นไม่มีคืออะไร?",
+            "ถ้าเลือกหน้าตาคนดังมาเป็นหน้าตัวเองได้ จะเลือกใคร?",
+            "เคยแอบนินทาเพื่อนในวงคนไหนในใจบ้างไหม?",
+            "เรื่องที่อายที่สุดตอนไปเดตครั้งแรกคืออะไร?",
+            "ถ้าเลือกไปเที่ยวต่างประเทศฟรีๆ คนเดียวจะไปไหน?",
+            "เคยทำโทรศัพท์ตกส้วมหรือตกน้ำไหม เล่าซิ",
+            "คิดว่าตัวเองมีเสน่ห์ที่สุดตอนทำท่าไหน?",
+            "ถ้าวันนี้เป็นวันสุดท้ายของชีวิต อยากบอกอะไรกับใคร?",
+            "เคยแอบชอบแฟนของเพื่อนสนิทตัวเองไหม?",
+            "เคยเดินชนกระจกใสหรือเสาไฟฟ้าแรงๆ ต่อหน้าคนเยอะๆ ไหม?",
+            "ถ้าโดนหวยรางวัลที่ 1 จะเก็บบัตรเครดิตใครคนแรก?",
+            "นิสัยของคนทางซ้ายที่ขัดใจที่สุดคืออะไร?",
+            "เคยแอบขโมยเงินพ่อแม่มารวมตี้เล่นเกมไหม?",
+            "ถ้าต้องกินอาหารอย่างเดียวไปทั้งชีวิต จะกินอะไร?",
+
+            // 18+ / แซ่บๆ (51-100)
+            "จุดที่เซ็กซี่ที่สุดบนร่างกายของตัวเองคือตรงไหน?",
+            "เคยมีความคิด 18+ กับคนในวงนี้คนไหนบ้างไหม สารภาพมา!",
+            "สถานที่แปลกที่สุดที่เคยมีซัมething คือที่ไหน?",
+            "ถ้าต้องมี One Night Stand กับคนในวง จะเลือกใคร?",
+            "จินตนาการทางเพศที่wildที่สุดในหัวคือแบบไหน?",
+            "เคยส่งรูปวาบหวิว (Nude/Semi-nude) ให้ใครบ้างไหม?",
+            "ความรู้สึกครั้งแรกตอนเสียซิงเป็นยังไง เล่าแบบย่อๆ",
+            "สเปคเรื่องบนเตียง ชอบแบบดุดัน นุ่มนวล หรือโลดโผน?",
+            "เคยแอบช่วยตัวเองแล้วโดนคนอื่นจับได้ไหม?",
+            "ขนาดและความสูง มีผลกับเรื่องบนเตียงไหมสำหรับคุณ?",
+            "เคยฝันเปียกหรือฝันทะลึ่งถึงใครในวงนี้หรือเปล่า?",
+            "เคยมีเซ็กส์ในที่สาธารณะ เช่น ในรถ ในห้องน้ำสาธารณะ ไหม?",
+            "ถ้าแฟนชวนลองของแปลกๆ บนเตียง จะยอมไหม?",
+            "ไอเทมลับหรือของเล่นผู้ใหญ่ชิ้นโปรดคืออะไร (ถ้ามี)?",
+            "เคยโกหกเรื่องความซิงของตัวเองไหม?",
+            "ชอบเปิดไฟสว่างหรือปิดไฟมืดสนิทเวลาเข้าด้ายเข้าเข็ม?",
+            "ถ้าต้องเลือก 'เซ็กส์จัด' แต่หน้าตาธรรมดา กับ 'หน้าตาดีแต่โนเซ็กส์' เลือกอะไร?",
+            "เคยแอบมองหุ่นหรือเป้าของใครในวงนี้โดยที่เขาไม่รู้ตัวไหม?",
+            "ท่าไม้ตายบนเตียงที่คิดว่าตัวเองเด็ดสุดคือท่าอะไร?",
+            "เคยมีประสบการณ์สัมพันธ์ลับๆ กับคนที่มีแฟนแล้วไหม?",
+            "ถ้าจูบกับคนทางซ้ายตอนนี้ จะให้กี่คะแนนเต็ม 10?",
+            "เคยเมาแล้วไปจุ๊บหรือนัวกับคนที่ไม่รู้จักไหม?",
+            "รู้สึกยังไงกับการมีเซ็กส์แบบกลุ่ม (Group Sex) สนใจไหม?",
+            "เคยแอบดูหนังผู้ใหญ่ของเพื่อนบ้านหรือคนใกล้ตัวไหม?",
+            "ถ้าแฟนบอกว่า 'วันนี้ไม่มีอารมณ์' จะรู้สึกยังไง?",
+            "เคยมีอารมณ์ทางเพศขณะนั่งเรียนหรือประชุมงานไหม?",
+            "ส่วนไหนของเพศตรงข้ามที่ดึงดูดสายตาคุณเป็นอันดับแรก?",
+            "เคยแชทคุยเสียว (Cyber Sex) กับคนที่ไม่เคยเจอหน้ากันไหม?",
+            "ถ้าแฟนเก่าชวนไปห้องตอนนี้ จะไปไหมเพราะอะไร?",
+            "เคยแอบได้ยินเสียงห้องข้างๆ ทำกิจกรรม 18+ ไหม?",
+            "คิดว่าตัวเองเสร็จยากหรือเสร็จง่ายเวลาปฏิบัติจริง?",
+            "เคยมีความรู้สึกหึงหวงเวลาเพื่อนไปมีซัมething กับคนอื่นไหม?",
+            "ถ้าต้องใส่ชุดคอสเพลย์บนเตียง อยากใส่ชุดอะไร?",
+            "เคยโดนจับได้คาหนังคาเขาขณะกำลังสวีทกับแฟนไหม?",
+            "เคยมีความรู้สึกอยากลองมีอะไรกับเพศเดียวกันไหม?",
+            "สบตาใครในวงตอนนี้แล้วรู้สึกเขินที่สุด?",
+            "เคยใช้เสียงครางหรือคำพูดปลุกเร้าแบบไหนตอนอยู่บนเตียง?",
+            "ถ้าต้องเลือกจูบกับดาราโป๊ชื่อดัง จะเลือกใคร?",
+            "เคยเผลอเรียกชื่อคนอื่นตอนกำลังสวีทกับแฟนไหม?",
+            "ความลับเรื่องเซ็กส์ที่อายที่สุดในชีวิตคืออะไร?",
+            "เคยแอบถ่ายรูปเก็บแต้มแฟนเก่าไว้ดูเล่นไหม?",
+            "คิดว่าตัวเองเซ็กจัดระดับไหนในสเกล 1-10?",
+            "เคยมีซัมething กับคนอายุมากกว่าหรือน้อยกว่าเยอะมากๆ ไหม?",
+            "ถ้ามีคนมาเสนอเงิน 1 ล้านแลกกับการมีค่ำคืนด้วย จะตกลงไหม?",
+            "เคยแอบคิดทะลึ่งกับเพื่อนสนิทตัวเองไหม?",
+            "ประสบการณ์ One Night Stand ครั้งแรกประทับใจไหม?",
+            "ชอบให้เล้าโลมนานๆ หรือลุยเข้าประเด็นเลย?",
+            "เคยแอบมีความสัมพันธ์กับคนในที่ทำงานหรือที่เรียนเดียวกันไหม?",
+            "ถ้าต้องอธิบายลีลาของตัวเองเป็นสัตว์ 1 ชนิด จะเป็นสัตว์อะไร?",
+            "เคยมีความลับเรื่องเซ็กส์ที่แฟนปัจจุบันไม่เคยรู้เลยไหม?"
+        ];
+
+        // 100 ข้อ Dare (ผสมธรรมดา + 18+)
+        const dareList = [
+            // ธรรมดา / ฮาๆ (1-50)
+            "ส่งข้อความไปหาแฟนเก่าว่า 'คิดถึงนะ' แล้วแคปให้ดู",
+            "ให้คนทางซ้ายมือวาดรูปอะไรก็ได้บนหน้าผากด้วยปากกา",
+            "ทำท่าทางเลียนแบบสัตว์ป่า 30 วินาทีแบบห้ามหลุดขำ",
+            "โพสต์สตอรี่เฟซบุ๊กชมตัวเองว่า 'ฉันสวยและรวยมากที่สุดในปฐพี' 1 ชม.",
+            "ยอมให้คนตรงข้ามผสมเครื่องดื่มสูตรพิสดารให้ 1 แก้วแล้วซดหมด",
+            "โทรหาพ่อแม่หรือเพื่อนสนิท แล้วบอกรักด้วยน้ำเสียงจริงจัง",
+            "ห้ามพูดภาษาไทย 3 ตา ใครพูดไทยโดนทำโทษดื่ม 1 เป๊ก",
+            "ทำท่าเซ็กซี่แคทวอล์กกลางวงรอบโต๊ะ 1 รอบ",
+            "ให้คนในวงเลือกรูปในมือถือมาโพสต์ลงสตอรี่ส่วนตัว",
+            "ตะโกนคำว่า 'ฉันโสดและแซ่บมากกก!' ดังๆ ออกนอกหน้าต่าง",
+            "ทำหน้าทำตาล้อเลียนคนทางขวาให้ตลกที่สุด 20 วินาที",
+            "ส่งสติกเกอร์หน้ากวนๆ ไปในแชทกลุ่มครอบครัว",
+            "ให้คนในวงตั้งชื่อเล่นใหม่ให้ แล้วต้องใช้ชื่อนั้นไปจนจบเกม",
+            "ทำท่ากราบขอขมาคนทางซ้ายแบบเบญจางคประดิษฐ์",
+            "เปิดแกลเลอรี่รูปในมือถือให้ทุกคนดู 3 รูปตามใจคนสั่ง",
+            "ทำเสียงเด็กทารกงอแงขอขนมจนกว่าจะถึงตาตัวเองรอบหน้า",
+            "เต้นท่า TikTok เพลงฮิตล่าสุดกลางวงแบบไม่เปิดเพลง",
+            "กินพริกสด 1 เม็ด หรือกินของเปรี้ยวที่สุดที่มีในบ้าน",
+            "ทำท่าเป็นพนักงานเสิร์ฟบริการน้ำให้ทุกคนในวง 1 รอบ",
+            "ห้ามกระพริบตาเป็นเวลา 1 นาที ใครกระพริบตาโดนทำโทษ",
+            "พูดชมตัวเองหน้ากระจกหรือกล้องมือถือ 5 ข้อติดกัน",
+            "ทำเสียงแมวเหมียวอ้อนขออาหารใส่คนทางขวา",
+            "อมน้ำไว้ในปากแล้วห้ามกลืน ห้ามพูด จนกว่าจะครบรอบคนถัดไป",
+            "ให้คนในวงเกล้าผมหรือแต่งหน้าแต่งตาให้ตามใจชอบ 3 นาที",
+            "ทำท่าสะพานโค้งหรือแพลงก์ค้างไว้ 30 วินาที",
+            "ส่งเสียงหัวเราะแบบนางมารร้ายหรือตัวร้ายในละคร 15 วินาที",
+            "เดินวนรอบโต๊ะ 1 รอบพร้อมร้องเพลงชาติไทยเสียงดัง",
+            "ทำท่ากอดเสาหรือกอดขาคนข้างๆ พร้อมบอก 'อย่าทิ้งฉันไป'",
+            "ถอดถุงเท้าแล้วเอามาดมโชว์ความหอม (หรือเหม็น) 1 ที",
+            "ทำท่าทางเหมือนหุ่นยนต์จนกว่าจะถึงตาตัวเองรอบหน้า",
+            "พิมพ์บอกรักเพื่อนสนิทคนแรกในแชทว่า 'แกคือดวงใจของฉัน'",
+            "ทำหน้าบูดบึ้งงอนโลก ห้ามยิ้มเด็ดขาดเป็นเวลา 2 ตา",
+            "กระโดดตบ 20 ครั้งติดกันตรงกลางวง",
+            "ทำท่าเป่ากบกับคนตรงข้าม ใครแพ้ดื่ม 1 เป๊ก",
+            "ใช้ศอกเขียนชื่อตัวเองในอากาศให้ทุกคนทาย",
+            "ทำเสียงเอฟเฟกต์ระเบิดหรือเสียงปืนประกอบทุกครั้งที่มีคนพูด",
+            "เอาน้ำแข็งใส่หลังเสื้อแล้วปล่อยให้ละลายเอง",
+            "ทำท่าหมุนตัวเป็นบัลเลต์ 3 รอบแบบไม่ให้ล้ม",
+            "สลับที่นั่งกับคนทางขวามือทันที",
+            "ทำท่าไหว้เจ้าแม่กวนอิมแล้วขอหวยเสียงดัง",
+            "ทำหน้าตาน่ารักคิ้วท์ๆ โพสท่าส่งมินิฮาร์ทให้ทุกคนในวง",
+            "ทำเสียงคนแก่ไอแคกๆ 10 ครั้งติด",
+            "เดินเขย่งขาเดียวไปหยิบของที่ไกลที่สุดในห้องมา 1 อย่าง",
+            "ทำท่ากุมขมับทำหน้าเครียดเหมือนหนี้ท่วมหัว 1 นาที",
+            "ร้องเพลงโปรด 1 ท่อนด้วยเสียงโอเปร่า",
+            "ทำท่าทำความเคารพแบบทหารราบให้คนทางซ้าย 5 ครั้ง",
+            "ทำท่าตีลังกาหรือม้วนหน้า (ถ้าสถานที่อำนวย ถ้าไม่ได้ให้นอนกลิ้ง)",
+            "ทำเสียงเป็ดร้อง 'กั๊บๆ' จนกว่าเพื่อนจะอนุญาตให้หยุด",
+            "ส่งจูบ (Blow Kiss) ให้กล้องหรือให้คนตรงข้าม 3 ครั้งติด",
+            "ทำหน้าทะเล้นแลบลิ้นปลิ้นตากล้อง 10 วินาที",
+
+            // 18+ / แซ่บๆ (51-100)
+            "เดินไปกระซิบข้างหูคนทางซ้ายด้วยประโยคชวนเสียวที่สุดเท่าที่จะคิดได้",
+            "ถอดเสื้อคลุมหรือเสื้อกันหนาวออก เหลือไว้แค่เสื้อตัวในสุด",
+            "ให้คนทางขวาใช้มือบีบก้น 1 ครั้งแบบเต็มแรง",
+            "ทำท่าทางจำลองเวลาเสร็จกิจแบบสมจริงที่สุด 10 วินาที",
+            "นอนราบลงกับพื้นแล้วให้คนข้างๆ คร่อมร่างแกล้งทำหน้าดุใส่",
+            "โทรหาเพื่อนสนิทแล้วบอกว่า 'ฉันกำลังรู้สึกมีอารมณ์แปลกๆ' แล้ววางสาย",
+            "ใช้ฟันงับติ่งหูคนทางขวาเบาๆ 3 วินาที",
+            "ถอดเข็มขัดหรือเชือกกางเกงออกแล้วมัดตัวเองโชว์ 1 นาที",
+            "ทำหน้าตาและเสียงเซ็กซี่เย้ายวนใจใส่กล้อง 10 วินาที",
+            "ให้คนในวงเลือกใครก็ได้ 1 คนมาจ้องตาแบบไม่กะพริบ 20 วินาที ใครเขินก่อนแพ้",
+            "ส่งข้อความไปหาคนคุยปัจจุบันว่า 'คืนนี้อยากเจอจัง คิดถึงเรื่องนั้น' แล้วแคปให้ดู",
+            "ถอดเสื้อออก 1 ชิ้น (เสื้อนอกหรือแจ็กเก็ต) ทันที",
+            "ให้คนทางซ้ายลูบไล้แขนและต้นขา 10 วินาทีแบบยั่วยวน",
+            "ทำท่าป้อนอาหารหรือป้อนน้ำให้คนทางขวาด้วยท่าทางเซ็กซี่ที่สุด",
+            "กัดริมฝีปากล่างตัวเองค้างไว้แล้วส่งสายตาพิฆาตให้ทุกคนในวง",
+            "ใช้มือลูบไล้เรือนร่างตัวเองกลางวง 10 วินาที",
+            "สารภาพชื่อคนในวงที่คิดว่าหุ่นน่าฟัดที่สุดในสายตาคุณ",
+            "ให้คนในวงทุกคนลงคะแนนว่าใครในวงดูเซ็กซี่ที่สุด แล้วคุณต้องกอดคนนั้น 10 วินาที",
+            "ทำเสียงครางต่ำๆ ในลำคอให้คนข้างๆ ฟังใกล้ๆ",
+            "แกล้งทำท่าเป็นคนโรคจิตพยายามจีบคนทางขวาด้วยคำพูด 18+",
+            "ถอดถุงเท้าแล้วให้คนทางซ้ายเอามาดมพิสูจน์กลิ่น",
+            "โชว์รอยสักหรือแผลเป็นลับๆ (ที่ไม่โป๊เกินไป) ให้เพื่อนดู",
+            "นั่งตักคนทางขวาเป็นเวลา 2 ตาเต็ม",
+            "ทำท่าทางเลียนแบบฉากเลิฟซีนในหนังดัง 10 วินาที",
+            "ให้คนทางขวาสั่งให้ทำอะไรก็ได้ 1 อย่าง (แบบ 18+ เบาๆ ห้ามปฏิเสธ)",
+            "เขียนคำว่า 'แซ่บ' ไว้ที่หน้าอกหรือแขนด้วยปากกา",
+            "ทำหน้าเคลิบเคลิ้มเหมือนกำลังฟินสุดๆ 15 วินาที",
+            "หอมแก้มคนทางซ้ายแบบฟอดใหญ่พร้อมเสียงดังฟังชัด",
+            "แกล้งทำเป็นคนเมาแล้วไปซบไหล่คนตรงข้ามพร้อมอ้อน",
+            "ถอดเครื่องประดับทั้งหมดบนตัวออกมากองไว้ตรงกลางวง",
+            "ทำท่ากระซิบคำหยาบโลนใส่หูคนทางขวา",
+            "ให้ทุกคนในวงตั้งคำถาม 18+ คุณได้ 1 ข้อโดยห้ามโกหก",
+            "นอนหงายแล้วให้คนทางซ้ายนั่งคร่อมแล้วทำหน้าดุใส่ 5 วินาที",
+            "ทำท่าทางสะบัดผมและยักย้ายส่ายสะโพกยั่วๆ 15 วินาที",
+            "ใช้ลิ้นเลียริมฝีปากตัวเองวนไป 5 รอบแบบเซ็กซี่",
+            "แกล้งทำเป็นเลียไอศกรีมหรือแท่งอะไรก็ได้ด้วยท่าทางชวนคิดลึก",
+            "ให้คนทางขวาเป็นคนป้อนน้ำให้คุณโดยห้ามใช้มือจับแก้ว",
+            "ส่งเสียงซี้ดปากร้องซี๊ดซ๊าด 5 ครั้งติดกัน",
+            "ทำท่าขยี้ตาแล้วอ้าปากค้างทำหน้าเสียวซ่าน",
+            "เอานิ้วแตะริมฝีปากคนทางขวาเบาๆ 1 ครั้ง",
+            "ทำท่าทางเหมือนแมียวกำลังอ้อนเจ้าของแบบเร่าร้อน",
+            "ถอดรองเท้าแล้วให้คนข้างๆ นวดเท้าให้ 30 วินาที",
+            "ทำเสียงกระซิบคำว่า 'คืนนี้ไม่รอดแน่' ใส่ไมค์หรือใส่หูเพื่อน",
+            "ให้คนทางซ้ายตีก้น 1 ทีเบาๆ เป็นการทำโทษ",
+            "ทำท่ากอดรัดฟัดเหวี่ยงกับหมอนข้างเหมือนคนกำลังคลั่งรัก",
+            "ชูนิ้วกลางให้ตัวเองในกระจกแล้วบอกว่า 'เธอ2แซ่บเกินไปแล้ว'",
+            "ทำหน้าตาออดอ้อนขอความรักจากคนทางซ้ายสุดชีวิต",
+            "สลับเสื้อกับคนทางขวาใส่เป็นเวลา 3 ตา",
+            "ทำท่าทางประหนึ่งเป็นนางแบบ/นายแบบชุดชั้นในโพสท่า 3 ท่า",
+            "ตะโกนบอกรักคนทางซ้ายด้วยเสียงดังฟังชัด 3 รอบ"
+        ];
+
+        function generatePlayerInputs() {
+            let count = document.getElementById('playerCountSelect').value;
+            let container = document.getElementById('playerInputsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="player-input-row">
+                        <span style="font-size:0.85rem; width:55px; text-align:left;">คนที่ ${i+1}:</span>
+                        <input type="text" id="playerName_${i}" placeholder="ใส่ชื่อผู้เล่น ${i+1}" value="เพื่อน ${i+1}">
+                    </div>
+                `;
+            }
+        }
+
+        function startGame() {
+            let count = document.getElementById('playerCountSelect').value;
+            players = [];
+            for (let i = 0; i < count; i++) {
+                let name = document.getElementById(`playerName_${i}`).value.trim();
+                if (name) players.push(name);
+            }
+            if (players.length === 0) {
+                alert('กรุณาใส่อย่างน้อย 1 คน!');
+                return;
+            }
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            pickRandomPlayer();
+        }
+
+        function backToSetup() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('setupScreen').style.display = 'flex';
+        }
+
+        function pickRandomPlayer() {
+            let randomIndex = Math.floor(Math.random() * players.length);
+            activePlayer = players[randomIndex];
+            document.getElementById('currentTargetName').innerText = activePlayer;
+        }
+
+        function pickCard(type) {
+            let selectedText = "";
+            let titleText = "";
+            
+            if (type === 'truth') {
+                titleText = `💡 TRUTH (${activePlayer})`;
+                let randIdx = Math.floor(Math.random() * truthList.length);
+                selectedText = truthList[randIdx];
+            } else {
+                titleText = `🔥 DARE (${activePlayer})`;
+                let randIdx = Math.floor(Math.random() * dareList.length);
+                selectedText = dareList[randIdx];
+            }
+
+            document.getElementById('resultModalTitle').innerText = titleText;
+            document.getElementById('resultModalText').innerText = selectedText;
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeModalAndNext() {
+            document.getElementById('resultModal').style.display = 'none';
+            pickRandomPlayer();
+        }
+
+        window.onload = function() {
+            generatePlayerInputs();
+        };
+    </script>
+</body>
+</html>

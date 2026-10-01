@@ -8,8 +8,7 @@
     <style>
         :root {
             --bg-color: #0b061a;
-            --card-bg: rgba(26, 15, 53, 0.85);
-            /* ปรับกรอบและออร่าเป็นสีม่วง */
+            --card-bg: rgba(26, 15, 53, 0.9);
             --border-glow: rgba(168, 85, 247, 0.6);
             --text-main: #ffffff;
             --text-sub: #b8b2d1;
@@ -52,7 +51,7 @@
 
         .turn-badge {
             background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
-            padding: 8px 22px;
+            padding: 8px 25px;
             border-radius: 50px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -126,17 +125,77 @@
             line-height: 1.4;
         }
 
-        .remaining-tag {
-            margin-top: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 20px;
+        /* Modal Popup แบบเดียวกับหน้า Poker */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 3, 10, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal-card {
+            background: linear-gradient(135deg, #1a0f35 0%, #0f0721 100%);
+            border: 2px solid #a855f7;
             border-radius: 20px;
-            font-size: 1rem;
-            color: #f3f4f6;
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            max-width: 80%;
+            width: 90%;
+            max-width: 420px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 35px rgba(168, 85, 247, 0.4);
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: popUp 0.25s ease-out;
+        }
+
+        @keyframes popUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header-text {
+            color: #d8b4fe;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .modal-rule-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .modal-rule-desc {
+            font-size: 1.05rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .btn-modal {
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+            color: white;
+            border: 1px solid rgba(216, 180, 254, 0.4);
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(124, 58, 237, 0.5);
+            transition: all 0.2s;
+        }
+
+        .btn-modal:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);
         }
 
         /* เมนูด้านล่าง */
@@ -182,7 +241,16 @@
             <div class="card-text-main">KING'S CUP</div>
             <div class="card-text-sub">จิ้มเพื่อจั่วไพ่เสี่ยงทาย!</div>
         </div>
-        <div class="remaining-tag" id="rule-box">✨ จิ้มที่การ์ดเพื่อเริ่มเกมความสนุก!</div>
+    </div>
+
+    <!-- หน้าต่าง Pop-up ผลลัพธ์แบบ Card Poker -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-card">
+            <div class="modal-header-text" id="modal-player-turn">👑 ตาของ: ผู้เล่น</div>
+            <div class="modal-rule-title" id="modal-title">ชื่อกฎ</div>
+            <div class="modal-rule-desc" id="modal-desc">รายละเอียดคำสั่งกฎ...</div>
+            <button class="btn-modal" onclick="closeModal()">ลุยต่อเลย! 🍻</button>
+        </div>
     </div>
 
     <div class="bottom-nav">
@@ -191,7 +259,6 @@
     </div>
 
     <script>
-        // ระบบเสียง Web Audio API (ถอดแบบเสียงฟีลเดียวกับหน้า Poker)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playClickSound() {
@@ -234,7 +301,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // รายชื่อผู้เล่น
         let players = JSON.parse(localStorage.getItem('party_players')) || ['เพื่อน 1', 'เพื่อน 2', 'เพื่อน 3'];
         let currentPlayerIdx = 0;
 
@@ -245,7 +311,6 @@
         }
         updateTurn();
 
-        // กฎ King's Cup
         const kingsRules = [
             { title: "Waterfall (น้ำตก)", desc: "ทุกคนดื่มตามคนแรก และห้ามหยุดจนกว่าคนแรกจะหยุด!" },
             { title: "You (สั่งดื่ม)", desc: "ชี้หน้าสั่งให้ใครก็ได้ในวงดื่ม 1 แก้วทันที!" },
@@ -265,19 +330,30 @@
         let cardsLeft = 52;
 
         function drawCard() {
-            playDrawSound(); // เสียงจั่วไพ่ฟีลเดียวกับโป๊กเกอร์
+            playDrawSound();
             if (cardsLeft > 0) {
                 cardsLeft--;
                 document.getElementById('cards-left').innerText = cardsLeft;
                 
+                const currentName = players[currentPlayerIdx];
                 const randomRule = kingsRules[Math.floor(Math.random() * kingsRules.length)];
-                document.getElementById('rule-box').innerHTML = `<b>${randomRule.title}:</b> ${randomRule.desc}`;
+                
+                document.getElementById('modal-player-turn').innerText = `👑 ตาของ: ${currentName} จั่วได้:`;
+                document.getElementById('modal-title').innerText = randomRule.title;
+                document.getElementById('modal-desc').innerText = randomRule.desc;
 
-                currentPlayerIdx = (currentPlayerIdx + 1) % players.length;
-                updateTurn();
+                // แสดง Modal
+                document.getElementById('result-modal').style.display = 'flex';
             } else {
-                document.getElementById('rule-box').innerText = "🎉 ไพ่หมดสำรับแล้ว! เริ่มเกมใหม่โลด";
+                alert("ไพ่หมดสำรับแล้ว! เริ่มเกมใหม่โลด");
             }
+        }
+
+        function closeModal() {
+            playClickSound();
+            document.getElementById('result-modal').style.display = 'none';
+            currentPlayerIdx = (currentPlayerIdx + 1) % players.length;
+            updateTurn();
         }
     </script>
 </body>

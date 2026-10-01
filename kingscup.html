@@ -9,7 +9,8 @@
         :root {
             --bg-color: #0b061a;
             --card-bg: rgba(26, 15, 53, 0.85);
-            --border-glow: rgba(255, 215, 0, 0.4);
+            /* ปรับกรอบและออร่าเป็นสีม่วง */
+            --border-glow: rgba(168, 85, 247, 0.6);
             --text-main: #ffffff;
             --text-sub: #b8b2d1;
         }
@@ -41,7 +42,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 0.9rem;
             font-weight: 600;
-            color: #ffd700;
+            color: #d8b4fe;
         }
 
         .top-info {
@@ -50,19 +51,19 @@
         }
 
         .turn-badge {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
             padding: 8px 22px;
             border-radius: 50px;
             font-size: 1.1rem;
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            border: 1px solid rgba(216, 180, 254, 0.3);
             display: inline-block;
             margin-bottom: 8px;
         }
 
         .deck-count {
-            color: #fbbf24;
+            color: #d8b4fe;
             font-size: 0.95rem;
             font-weight: 500;
         }
@@ -74,7 +75,7 @@
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* พื้นที่กองไพ่กลางจอ */
+        /* พื้นที่กองไพ่กลางจอ (ออร่าสีม่วง) */
         .game-center {
             display: flex;
             flex-direction: column;
@@ -87,10 +88,10 @@
         .card-container {
             width: 220px;
             height: 310px;
-            background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
-            border: 2px solid #ffd700;
+            background: linear-gradient(135deg, #1e1b4b 0%, #2e1065 100%);
+            border: 2px solid #a855f7;
             border-radius: 18px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 25px rgba(255,215,0,0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 30px rgba(168, 85, 247, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -115,13 +116,13 @@
         .card-container .card-text-main {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #ffd700;
+            color: #e9d5ff;
             margin-bottom: 8px;
         }
 
         .card-container .card-text-sub {
             font-size: 0.9rem;
-            color: #d1d5db;
+            color: #cbd5e1;
             line-height: 1.4;
         }
 
@@ -132,7 +133,7 @@
             border-radius: 20px;
             font-size: 1rem;
             color: #f3f4f6;
-            border: 1px solid rgba(255,215,0,0.3);
+            border: 1px solid rgba(168, 85, 247, 0.4);
             max-width: 80%;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
@@ -185,32 +186,41 @@
     </div>
 
     <div class="bottom-nav">
-        <a href="index.html" class="btn-action">🏠 กลับหน้าหลัก</a>
-        <a href="login.html" class="btn-action">🔄 เปลี่ยนรายชื่อผู้เล่น</a>
+        <a href="index.html" class="btn-action" onclick="playClickSound()">🏠 กลับหน้าหลัก</a>
+        <a href="login.html" class="btn-action" onclick="playClickSound()">🔄 เปลี่ยนรายชื่อผู้เล่น</a>
     </div>
 
     <script>
-        // ระบบเสียงเอฟเฟคหนาแน่นสะใจ (Web Audio API)
+        // ระบบเสียง Web Audio API (ถอดแบบเสียงฟีลเดียวกับหน้า Poker)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            // เสียงจั่วไพ่ / คลิกตื่นเต้น
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
 
+        function playClickSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-            
-            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-            
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.15);
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        function playDrawSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
         }
 
         // นาฬิกา Real-time
@@ -255,7 +265,7 @@
         let cardsLeft = 52;
 
         function drawCard() {
-            playSound(); // เรียกเสียงเอฟเฟค
+            playDrawSound(); // เสียงจั่วไพ่ฟีลเดียวกับโป๊กเกอร์
             if (cardsLeft > 0) {
                 cardsLeft--;
                 document.getElementById('cards-left').innerText = cardsLeft;
